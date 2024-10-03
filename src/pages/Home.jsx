@@ -26,7 +26,7 @@ const Home = () => {
             `,
         }}
       >
-        <img src={LogoImage} alt="crowd1-logo" className="" />
+        <img src={LogoImage} alt="crowd1-logo"/>
       </nav>
       <div className="px-4 2xl:px-16">
         {/* Referral Link and Contract Address */}
