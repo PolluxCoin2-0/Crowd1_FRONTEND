@@ -1,7 +1,7 @@
 import { useSelector } from "react-redux";
 import { getUserMintedTimeApi, mintApi, updateUserMintedTimeApi, userDetailsApi, } from "../utils/api/apiFunctions";
 import { toast } from "react-toastify";
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 
 const MintTable = () => {
     const dummyData = [
@@ -17,6 +17,7 @@ const MintTable = () => {
     ];
 
   const stateData = useSelector((state)=>state?.wallet?.dataObject)
+  const [userDataApi, setUserDataApi] = useState({});
 
     const handldeMintFunc=async()=>{
       // check user can able to mint or not
@@ -54,7 +55,7 @@ const MintTable = () => {
     useEffect(()=>{
       const fetchData = async()=>{
         const userDataApi = await userDetailsApi(stateData?.walletAddress);
-        console.log(userDataApi);
+        setUserDataApi(userDataApi); // Set user data to state variable
       }
 
       fetchData();
@@ -76,30 +77,22 @@ const MintTable = () => {
               </tr>
             </thead>
             <tbody>
-              {dummyData.map((data, index) => (
-                <tr
-                  key={index}
-                  className={`${
-                    index === dummyData.length - 1 ? 'border-none' : 'border-b border-[#313133]'
-                  } hover:bg-[#2C2C2E] transition-all bg-transparent`}
-                >
-                  <td className="py-4 px-6">{data.cycle}</td>
-                  <td className="py-4 px-6 text-center">{data.amount}</td>
-                  <td className="py-4 px-6 text-center">{data.interest}</td>
-                  <td className="py-4 px-6 text-center">{data.totalEarnings}</td>
-                  <td className="py-4 px-6 text-center">{data.investDate}</td>
-                  <td className="py-4 px-6 text-center">{data.maturityDays}</td>
+              {/* border-b border-[#313133] */}
+                <tr className="border-none hover:bg-[#2C2C2E] transition-all bg-transparent">
+                  <td className="py-4 px-6">1</td>
+                  <td className="py-4 px-6 text-center">{userDataApi?.depositAmount ? userDataApi?.depositAmount :0}</td>
+                  <td className="py-4 px-6 text-center">{userDataApi?.depositAmount ? (userDataApi.depositAmount * 0.3).toFixed(2) : 0}</td>
+                  <td className="py-4 px-6 text-center">{userDataApi?.totalReward ? userDataApi?.totalReward : 0}</td>
+                  <td className="py-4 px-6 text-center">{userDataApi?.startTime ? new Date(userDataApi?.startTime).toISOString().split('T')[0] : 0}</td>
+                  <td className="py-4 px-6 text-center">  {userDataApi?.cycleCount ? `${userDataApi.mintCount}\\${userDataApi.cycleCount}` : 0}</td>
                   <td className="py-4 px-6 text-right">
-                    {data.mintReward && (
                       <button
                       onClick={handldeMintFunc}
                        className="bg-[linear-gradient(to_right,#FFE27A,#FFBA57,#98DB7C,#8BCAFF)] text-black font-bold py-2 px-8 rounded-lg shadow-lg hover:shadow-xl hover:scale-105 transition-transform duration-300">
                         Mint
                       </button>
-                    )}
                   </td>
                 </tr>
-              ))}
             </tbody>
           </table>
         </div>
