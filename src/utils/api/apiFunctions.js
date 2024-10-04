@@ -105,6 +105,7 @@ export const withdrawFundApi = async (walletAddress) => {
 
 // MINT
 export const mintApi = async (walletAddress) => {
+  console.log(walletAddress)
   return postRequest(API_ENDPOINTS.mint.userMint, { walletAddress });
 };
 

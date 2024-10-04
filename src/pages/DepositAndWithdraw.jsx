@@ -1,13 +1,13 @@
 import { useSelector } from "react-redux";
 import USDX from "../assets/USDX.png";
-import { useState } from "react";
-import { approveApi, depositFundApi, withdrawFundApi } from "../utils/api/apiFunctions";
+import { useEffect, useState } from "react";
+import { approveApi, depositFundApi, totalRoiReturnsApi, withdrawFundApi } from "../utils/api/apiFunctions";
 import { toast } from "react-toastify";
 
 const DepositAndWithdraw = () => {
   const stateData = useSelector((state)=>state?.wallet?.dataObject);
   const [depositAmount, setDepositAmount] = useState(20);
-  const [withDrawAmount, setWithDrawAmount] = useState(20);
+  const [userTotallROIReturn, setUserTotallROIReturn] = useState(0);
 
   const handleDepositFunc = async()=>{
     if (depositAmount < 20) {
@@ -55,6 +55,15 @@ const DepositAndWithdraw = () => {
       console.log("broadcast", broadcast);
       toast.success("Withdrawn successfully.")
   }
+
+  useEffect(()=>{
+    const fetchData = async ()=>{
+      const userROIReturnData = await totalRoiReturnsApi(stateData?.walletAddress);
+      console.log("userROIReturnData: ", userROIReturnData?.data);
+      setUserTotallROIReturn(userROIReturnData?.data);
+    }
+    fetchData();
+    },[])
 
   return (
     <div>
@@ -140,13 +149,9 @@ const DepositAndWithdraw = () => {
             </p>
 
             <div className="mt-6 flex flex-row justify-between items-center space-x-4">
-              <input
-                type="number"
-                placeholder="Enter Amount"
-                value={withDrawAmount}
-                onChange={(e)=>setWithDrawAmount(e.target.value)}
+              <p
                 className="w-full px-4 py-3 text-white bg-[#151515] border border-[#3A3A3C] rounded-lg focus:outline-none focus:ring-2 focus:ring-[#9b9b9b] focus:border-transparent transition-all shadow-inner hover:shadow-lg placeholder-gray-500"
-              />
+              >{userTotallROIReturn?.data ? userTotallROIReturn?.data : 0}</p>
               <div className="flex flex-row items-center space-x-2 bg-[#151515] px-4 py-3 rounded-lg border border-[#3A3A3C]">
                 <img src={USDX} alt="USDX" className="w-6 h-6" />
                 <p className="text-white font-medium pr-4">USDX</p>

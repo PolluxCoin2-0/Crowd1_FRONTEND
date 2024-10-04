@@ -35,7 +35,7 @@ import { setDataObject } from "../redux/slice";
           setReferralWallet("");
           setMyWallet("");
           dispatch(setDataObject(response?.data));
-          navigate("/home");
+          navigate("/");
         } else {
           toast.error("Registration failed. Please try again.");
         }
