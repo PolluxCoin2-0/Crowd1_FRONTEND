@@ -19,7 +19,7 @@ const Home = () => {
   return (
     <div className="min-h-screen bg-[#0E0E0E] text-white ">
       <nav
-        className="bg-[#151515] p-6 text-center mb-6"
+        className="bg-[#151515] p-6 text-center mb-6 flex justify-center"
         style={{
           boxShadow: `
               0 0px 25px rgba(0, 0, 0, 0.6)
