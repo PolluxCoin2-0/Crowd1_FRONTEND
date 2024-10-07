@@ -35,7 +35,7 @@ const Home = () => {
             <p className="text-gray-400 font-medium truncate">
               Referral Link: {stateData?.walletAddress ? stateData?.walletAddress : ""}
             </p>
-            <LuCopy color="white" size={24} className="cursor-pointer" onClick={()=>handleCopy("PR4fchA4kPy2m7HWuSiEcFz714cAnQcME9")}/>
+            <LuCopy color="white" size={24} className="cursor-pointer" onClick={()=>handleCopy(stateData?.walletAddress)}/>
           </div>
 
           <div className="bg-[#151515] flex items-center justify-between space-x-8 p-6 rounded-2xl w-full lg:w-1/2">
