@@ -53,7 +53,8 @@ const MintTable = () => {
     useEffect(()=>{
       const fetchData = async()=>{
         const userDataApi = await userDetailsApi(stateData?.walletAddress);
-        setUserDataApi(userDataApi); // Set user data to state variable
+        console.log("userDataApi: ", userDataApi)
+        setUserDataApi(userDataApi?.data); // Set user data to state variable
       }
 
       fetchData();
@@ -81,8 +82,8 @@ const MintTable = () => {
                   <td className="py-4 px-6 text-center">{userDataApi?.depositAmount ? userDataApi?.depositAmount :0}</td>
                   <td className="py-4 px-6 text-center">{userDataApi?.depositAmount ? (userDataApi.depositAmount * 0.3).toFixed(2) : 0}</td>
                   <td className="py-4 px-6 text-center">{userDataApi?.totalReward ? userDataApi?.totalReward : 0}</td>
-                  <td className="py-4 px-6 text-center">{userDataApi?.startTime ? new Date(userDataApi?.startTime).toISOString().split('T')[0] : 0}</td>
-                  <td className="py-4 px-6 text-center">  {userDataApi?.cycleCount ? `${userDataApi.mintCount}\\${userDataApi.cycleCount}` : 0}</td>
+                  <td className="py-4 px-6 text-center">{userDataApi?.startTime ? new Date(userDataApi.startTime * 1000).toLocaleDateString('en-GB') : 0}</td>
+                  <td className="py-4 px-6 text-center">  {userDataApi?.cycleCount ? `${userDataApi.mintCount}/30` : 0}</td>
                   <td className="py-4 px-6 text-right">
                       <button
                       onClick={handldeMintFunc}

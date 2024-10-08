@@ -10,10 +10,10 @@ const DepositAndWithdraw = () => {
   const [userTotallROIReturn, setUserTotallROIReturn] = useState(0);
 
   const handleDepositFunc = async()=>{
-    if (depositAmount < 20) {
+    if (depositAmount <= 20) {
       toast.error("The minimum deposit amount must be $20 or more.");
       return;
-    } else if (depositAmount > 1000) {
+    } else if (depositAmount >= 1000) {
       toast.error("The maximum deposit amount must not exceed $1000.");
       return;
     }    
@@ -34,7 +34,19 @@ const DepositAndWithdraw = () => {
 
       console.log("broadcast", broadcast);
     const depositApiData = await depositFundApi(depositAmount, stateData?.referredBy, stateData?.walletAddress);
-    console.log(depositApiData);
+    console.log("depositdata", depositApiData?.data?.transaction);
+
+    const signedTransaction2 = await window.pox.signdata(
+      depositApiData?.data?.transaction
+    );
+
+    console.log("signedTransaction: ", signedTransaction2);
+
+    const broadcast2 = JSON.stringify(
+      await window.pox.broadcast(JSON.parse(signedTransaction2[1]))
+    );
+
+    console.log("broadcast", broadcast2);
     toast.success("Deposited successfully.")
   }
 
@@ -151,7 +163,7 @@ const DepositAndWithdraw = () => {
             <div className="mt-6 flex flex-row justify-between items-center space-x-4">
               <p
                 className="w-full px-4 py-3 text-white bg-[#151515] border border-[#3A3A3C] rounded-lg focus:outline-none focus:ring-2 focus:ring-[#9b9b9b] focus:border-transparent transition-all shadow-inner hover:shadow-lg placeholder-gray-500"
-              >{userTotallROIReturn?.data ? userTotallROIReturn?.data : 0}</p>
+              >{userTotallROIReturn ? userTotallROIReturn : 0}</p>
               <div className="flex flex-row items-center space-x-2 bg-[#151515] px-4 py-3 rounded-lg border border-[#3A3A3C]">
                 <img src={USDX} alt="USDX" className="w-6 h-6" />
                 <p className="text-white font-medium pr-4">USDX</p>
