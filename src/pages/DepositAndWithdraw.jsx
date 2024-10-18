@@ -10,13 +10,10 @@ const DepositAndWithdraw = () => {
   const [userTotallROIReturn, setUserTotallROIReturn] = useState(0);
 
   const handleDepositFunc = async()=>{
-    if (depositAmount <= 20) {
-      toast.error("The minimum deposit amount must be $20 or more.");
+    if (depositAmount !== 100) {
+      toast.error("The minimum deposit amount must be $100.");
       return;
-    } else if (depositAmount >= 1000) {
-      toast.error("The maximum deposit amount must not exceed $1000.");
-      return;
-    }    
+    } 
 
     // Approval
     // const approvalData = await approveApi(stateData?.walletAddress, depositAmount);
