@@ -19,20 +19,20 @@ const DepositAndWithdraw = () => {
     }    
 
     // Approval
-    const approvalData = await approveApi(stateData?.walletAddress, depositAmount);
-    console.log("approvalData",approvalData);
+    // const approvalData = await approveApi(stateData?.walletAddress, depositAmount);
+    // console.log("approvalData",approvalData);
 
-    const signedTransaction = await window.pox.signdata(
-        approvalData?.data?.transaction
-      );
+    // const signedTransaction = await window.pox.signdata(
+    //     approvalData?.data?.transaction
+    //   );
 
-      console.log("signedTransaction: ", signedTransaction);
+    //   console.log("signedTransaction: ", signedTransaction);
 
-      const broadcast = JSON.stringify(
-        await window.pox.broadcast(JSON.parse(signedTransaction[1]))
-      );
+    //   const broadcast = JSON.stringify(
+    //     await window.pox.broadcast(JSON.parse(signedTransaction[1]))
+    //   );
 
-      console.log("broadcast", broadcast);
+    //   console.log("broadcast", broadcast);
     const depositApiData = await depositFundApi(depositAmount, stateData?.referredBy, stateData?.walletAddress);
     console.log("depositdata", depositApiData?.data?.transaction);
 
