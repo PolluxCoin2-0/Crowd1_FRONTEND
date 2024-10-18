@@ -115,7 +115,7 @@ const DepositAndWithdraw = () => {
               />
               <div className="flex flex-row items-center space-x-2 bg-[#151515] px-4 py-3 rounded-lg border border-[#3A3A3C]">
                 <img src={USDX} alt="USDX" className="w-6 h-6" />
-                <p className="text-white font-medium pr-4">USDX</p>
+                <p className="text-white font-medium pr-4">POX</p>
               </div>
             </div>
 
@@ -163,7 +163,7 @@ const DepositAndWithdraw = () => {
               >{userTotallROIReturn ? userTotallROIReturn : 0}</p>
               <div className="flex flex-row items-center space-x-2 bg-[#151515] px-4 py-3 rounded-lg border border-[#3A3A3C]">
                 <img src={USDX} alt="USDX" className="w-6 h-6" />
-                <p className="text-white font-medium pr-4">USDX</p>
+                <p className="text-white font-medium pr-4">POX</p>
               </div>
             </div>
 
