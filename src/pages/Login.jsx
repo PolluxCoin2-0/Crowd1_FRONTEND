@@ -22,7 +22,7 @@ const Login = () => {
   
     return (
       <div className="min-h-screen flex items-center justify-center bg-black p-4">
-        <div className="border border-[#39393C] p-6 sm:p-8 rounded-2xl text-center space-y-8 max-w-sm sm:max-w-md w-full"
+        <div className="border border-[#39393C] p-6 sm:p-8 rounded-2xl text-center space-y-8 max-w-sm sm:max-w-md w-full bg-[#000000]"
          style={{
             boxShadow: `
               0 0px 5px rgba(255, 255, 255, 0.3)
@@ -38,7 +38,7 @@ const Login = () => {
             <Link to="/register" className="border border-white text-white py-3 px-4 sm:px-6 font-bold rounded-full hover:bg-white hover:text-gray-900 transition-all w-full md:w-1/2">
               Register
             </Link>
-            <button className="whitespace-nowrap bg-[linear-gradient(to_right,#FFE27A,#FFBA57,#98DB7C,#8BCAFF)] text-white font-bold py-3 px-4 sm:px-6 rounded-full
+            <button className="whitespace-nowrap bg-[linear-gradient(to_right,#FFE27A,#FFBA57,#98DB7C,#8BCAFF)] text-black font-bold py-3 px-4 sm:px-6 rounded-full
              shadow-lg hover:shadow-xl transition-all w-full md:w-1/2"
              onClick={handleLogin}
              >

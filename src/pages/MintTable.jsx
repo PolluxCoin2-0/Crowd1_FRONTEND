@@ -4,31 +4,29 @@ import { toast } from "react-toastify";
 import { useEffect, useState } from "react";
 
 const MintTable = () => {
-    const dummyData = [
-      {
-        cycle: "1",
-        amount: "$1,000",
-        interest: "$300",
-        totalEarnings: "$1,300",
-        investDate: "2023-01-15",
-        maturityDays: "30",
-        mintReward: true,
-      },
-    ];
-
   const stateData = useSelector((state)=>state?.wallet?.dataObject)
   const [userDataApi, setUserDataApi] = useState({});
 
     const handldeMintFunc=async()=>{
-      // check user can able to mint or not
-      const lastMintTime = await getUserMintedTimeApi(stateData?.token)
-      const currentDate = new Date().toISOString().split('T')[0]; // Get current date in 'YYYY-MM-DD' format
-      const lastMintDate = new Date(lastMintTime?.data).toISOString().split('T')[0]; // Get last mint date in 'YYYY-MM-DD' format
       
-      if (currentDate === lastMintDate) {
-        toast.error("You can't mint more than once per day.");
-        return;
-      }
+      const lastMintTime = await getUserMintedTimeApi(stateData?.token);
+  const currentDate = new Date().toISOString().split('T')[0]; // Get current date in 'YYYY-MM-DD' format
+
+  // Check if lastMintTime?.data is a valid date
+  const isValidDate = (date) => {
+    return !isNaN(new Date(date).getTime()); // Returns true if valid date, false otherwise
+  };
+
+  let lastMintDate = null;
+
+  if (lastMintTime?.data && isValidDate(lastMintTime.data)) {
+    lastMintDate = new Date(lastMintTime.data).toISOString().split('T')[0]; // Convert last mint date to 'YYYY-MM-DD'
+  }
+
+  if (lastMintDate && currentDate === lastMintDate) {
+    toast.error("You can't mint more than once per day.");
+    return;
+  }
       
       const mintApiData = await mintApi(stateData?.walletAddress);
       console.log(mintApiData);
@@ -55,7 +53,8 @@ const MintTable = () => {
     useEffect(()=>{
       const fetchData = async()=>{
         const userDataApi = await userDetailsApi(stateData?.walletAddress);
-        setUserDataApi(userDataApi); // Set user data to state variable
+        console.log("userDataApi: ", userDataApi)
+        setUserDataApi(userDataApi?.data); // Set user data to state variable
       }
 
       fetchData();
@@ -83,8 +82,8 @@ const MintTable = () => {
                   <td className="py-4 px-6 text-center">{userDataApi?.depositAmount ? userDataApi?.depositAmount :0}</td>
                   <td className="py-4 px-6 text-center">{userDataApi?.depositAmount ? (userDataApi.depositAmount * 0.3).toFixed(2) : 0}</td>
                   <td className="py-4 px-6 text-center">{userDataApi?.totalReward ? userDataApi?.totalReward : 0}</td>
-                  <td className="py-4 px-6 text-center">{userDataApi?.startTime ? new Date(userDataApi?.startTime).toISOString().split('T')[0] : 0}</td>
-                  <td className="py-4 px-6 text-center">  {userDataApi?.cycleCount ? `${userDataApi.mintCount}\\${userDataApi.cycleCount}` : 0}</td>
+                  <td className="py-4 px-6 text-center">{userDataApi?.startTime ? new Date(userDataApi.startTime * 1000).toLocaleDateString('en-GB') : 0}</td>
+                  <td className="py-4 px-6 text-center">  {userDataApi?.cycleCount ? `${userDataApi.mintCount}/30` : 0}</td>
                   <td className="py-4 px-6 text-right">
                       <button
                       onClick={handldeMintFunc}

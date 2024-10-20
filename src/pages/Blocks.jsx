@@ -89,11 +89,11 @@ const Blocks = () => {
               Your Referral Wallets
             </p>
           </div>
-          <Link to="/referralearning">
+          {/* <Link to="/referralearning"> */}
             <div className="bg-[#202020] cursor-pointer rounded-full p-[8px]">
               <p className="text-sm p-1 text-[#8C8B8B] font-semibold">View</p>
             </div>
-          </Link>
+          {/* </Link> */}
         </div>
       </div>
     </div>
