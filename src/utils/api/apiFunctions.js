@@ -105,7 +105,6 @@ export const withdrawFundApi = async (walletAddress) => {
 
 // MINT
 export const mintApi = async (walletAddress) => {
-  console.log(walletAddress)
   return postRequest(API_ENDPOINTS.mint.userMint, { walletAddress });
 };
 
@@ -138,10 +137,4 @@ export const totalReferralReturnsApi = async (walletAddress) => {
   return postRequest(API_ENDPOINTS.tokenReturns.totalReferralReturns, {
     walletAddress,
   });
-};
-
-// APPROVE DEPOSIT
-export const approveApi = async (walletAddress, amount) => {
-  console.log(walletAddress, amount);
-  return postRequest(API_ENDPOINTS.approve, { walletAddress, amount });
 };
