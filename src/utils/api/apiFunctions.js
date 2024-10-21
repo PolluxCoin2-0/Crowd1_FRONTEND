@@ -10,7 +10,6 @@ const BASE_URL = import.meta.env.VITE_BASE_URL;
  * @returns {Promise<object>} - The response data from the API.
  */
 const postRequest = async (endpoint, data) => {
-  console.log(BASE_URL+endpoint, data);
   try {
     const response = await axios.post(`${BASE_URL}${endpoint}`, data);
     return response.data;

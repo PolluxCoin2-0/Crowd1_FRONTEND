@@ -12,23 +12,47 @@ import { toast } from "react-toastify";
 const DepositAndWithdraw = () => {
   const stateData = useSelector((state) => state?.wallet?.dataObject);
   const [userTotallROIReturn, setUserTotallROIReturn] = useState(0);
+  const[cycleCount, setCycleCount] = useState(0);
   const [availableAmount, setAvailableAmount] = useState(0);
+  const [isLoading, setIsLoading] = useState(false);
+
+  const fetchData = async () => {
+    const userROIReturnData = await totalRoiReturnsApi(
+      stateData?.walletAddress
+    );
+    setUserTotallROIReturn(userROIReturnData?.data);
+    const userData = await userDetailsApi(stateData?.walletAddress);
+    setCycleCount(userData?.data?.cycleCount)
+    setAvailableAmount( userData?.data?.depositAmount)
+  };
 
   useEffect(() => {
-    const fetchData = async () => {
-      const userROIReturnData = await totalRoiReturnsApi(
-        stateData?.walletAddress
-      );
-      setUserTotallROIReturn(userROIReturnData?.data);
-      const userData = await userDetailsApi(stateData?.walletAddress);
-      setAvailableAmount( userData?.data?.depositAmount)
-    };
     if(stateData?.walletAddress){
       fetchData();
     }
-  }, [stateData?.walletAddress]);
+  }, [stateData?.walletAddress, isLoading]);
 
   const handleDepositFunc = async () => {
+    if(isLoading){
+      toast.warning("Deposit in progress...");
+      return;
+    }
+
+    if(cycleCount %30 !== 0){
+      toast.error("You can't deposit more than once every 30 days.");
+      return;
+    }
+
+    // CHECK POX BALANCE IN USER WALLET
+    const userBalance = await window.pox.getDetails();
+    const poxBalance = userBalance[1]?.data?.Balance
+    if((poxBalance/Math.pow(10,6))<100){
+      toast.error("Insufficient POX balance.");
+      return;
+    }
+
+    try {
+      setIsLoading(true);
     const depositApiData = await depositFundApi(
       100,
       stateData?.referredBy,
@@ -47,7 +71,13 @@ const DepositAndWithdraw = () => {
     );
 
     console.log("broadcast", broadcast2);
+    await fetchData();
     toast.success("Deposited successfully.");
+  } catch (error) {
+    toast.error("Something went wrong")
+  } finally{
+      setIsLoading(false);
+    }
   };
 
   const handleWithDrawFunc = async () => {
@@ -56,20 +86,38 @@ const DepositAndWithdraw = () => {
       return;
     }
 
-    const withDrawApiData = await withdrawFundApi(stateData?.walletAddress);
-    console.log(withDrawApiData);
-    const signedTransaction = await window.pox.signdata(
-      withDrawApiData?.data?.transaction
-    );
+    if(isLoading){
+      toast.warning("Withdrawal in progress...");
+      return;
+    }
 
-    console.log("signedTransaction: ", signedTransaction);
+    if(cycleCount !== 30){
+      toast.error("You can withdraw only when the cycle count is 30");
+      return;
+    }
 
-    const broadcast = JSON.stringify(
-      await window.pox.broadcast(JSON.parse(signedTransaction[1]))
-    );
+ try {
+  setIsLoading(true);
+  const withDrawApiData = await withdrawFundApi(stateData?.walletAddress);
+  console.log(withDrawApiData);
+  const signedTransaction = await window.pox.signdata(
+    withDrawApiData?.data?.transaction
+  );
 
-    console.log("broadcast", broadcast);
-    toast.success("Withdrawn successfully.");
+  console.log("signedTransaction: ", signedTransaction);
+
+  const broadcast = JSON.stringify(
+    await window.pox.broadcast(JSON.parse(signedTransaction[1]))
+  );
+
+  console.log("broadcast", broadcast);
+  await fetchData();
+  toast.success("Withdrawn successfully.");
+ } catch (error) {
+  toast.error("Something went wrong")
+ } finally {
+  setIsLoading(false);
+ }
   };
 
   return (

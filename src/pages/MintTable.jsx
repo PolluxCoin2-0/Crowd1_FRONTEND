@@ -11,68 +11,78 @@ import { useEffect, useState } from "react";
 const MintTable = () => {
   const stateData = useSelector((state) => state?.wallet?.dataObject);
   const [userDataApi, setUserDataApi] = useState({});
+  const [isLoading, setIsLoading] = useState(false);
+
+  const fetchData = async () => {
+    const userDataApi = await userDetailsApi(stateData?.walletAddress);
+    setUserDataApi(userDataApi?.data); // Set user data to state variable
+  };
+
 
   useEffect(() => {
-    const fetchData = async () => {
-      const userDataApi = await userDetailsApi(stateData?.walletAddress);
-      setUserDataApi(userDataApi?.data); // Set user data to state variable
-    };
-    if(stateData?.walletAddress){
-      fetchData(); 
+    if (stateData?.walletAddress) {
+      fetchData();
     }
-  }, []);
+  }, [isLoading]);
 
   const handldeMintFunc = async () => {
     if (userDataApi?.depositAmount == null || userDataApi.depositAmount <= 0) {
       toast.error("Deposit amount must be greater than 0.");
       return;
     }
-    
-    try {
-      const lastMintTime = await getUserMintedTimeApi(stateData?.token);
-    const currentDate = new Date().toISOString().split("T")[0]; // Get current date in 'YYYY-MM-DD' format
 
-    // Check if lastMintTime?.data is a valid date
-    const isValidDate = (date) => {
-      return !isNaN(new Date(date).getTime()); // Returns true if valid date, false otherwise
-    };
-
-    let lastMintDate = null;
-
-    if (lastMintTime?.data && isValidDate(lastMintTime.data)) {
-      lastMintDate = new Date(lastMintTime.data).toISOString().split("T")[0]; // Convert last mint date to 'YYYY-MM-DD'
-    }
-
-    if (lastMintDate && currentDate === lastMintDate) {
-      toast.error("You can't mint more than once per day.");
+    if (isLoading) {
+      toast.warning("Minting in progress!");
       return;
     }
 
-    const mintApiData = await mintApi(stateData?.walletAddress);
-    console.log(mintApiData);
+    try {
+      setIsLoading(true);
+      const lastMintTime = await getUserMintedTimeApi(stateData?.token);
+      const currentDate = new Date().toISOString().split("T")[0]; // Get current date in 'YYYY-MM-DD' format
 
-    const signedTransaction = await window.pox.signdata(
-      mintApiData?.data?.transaction
-    );
+      // Check if lastMintTime?.data is a valid date
+      const isValidDate = (date) => {
+        return !isNaN(new Date(date).getTime()); // Returns true if valid date, false otherwise
+      };
 
-    console.log("signedTransaction: ", signedTransaction);
+      let lastMintDate = null;
 
-    const broadcast = JSON.stringify(
-      await window.pox.broadcast(JSON.parse(signedTransaction[1]))
-    );
+      if (lastMintTime?.data && isValidDate(lastMintTime.data)) {
+        lastMintDate = new Date(lastMintTime.data).toISOString().split("T")[0]; // Convert last mint date to 'YYYY-MM-DD'
+      }
 
-    console.log("broadcast", broadcast);
+      if (lastMintDate && currentDate === lastMintDate) {
+        toast.error("You can't mint more than once per day.");
+        return;
+      }
 
-    // update user mint time
-    const updateMintedUserData = await updateUserMintedTimeApi(
-      stateData?.token
-    );
-    console.log("updateMintedUserData: ", updateMintedUserData);
+      const mintApiData = await mintApi(stateData?.walletAddress);
+      console.log(mintApiData);
 
-    toast.success("Minted successfully.");
+      const signedTransaction = await window.pox.signdata(
+        mintApiData?.data?.transaction
+      );
+
+      console.log("signedTransaction: ", signedTransaction);
+
+      const broadcast = JSON.stringify(
+        await window.pox.broadcast(JSON.parse(signedTransaction[1]))
+      );
+
+      console.log("broadcast", broadcast);
+
+      // update user mint time
+      const updateMintedUserData = await updateUserMintedTimeApi(
+        stateData?.token
+      );
+      console.log("updateMintedUserData: ", updateMintedUserData);
+      await fetchData();
+      toast.success("Minted successfully.");
     } catch (error) {
       toast.error("Something went wrong");
-      return;
+    } finally{
+      setIsLoading(false);
     }
   };
 
