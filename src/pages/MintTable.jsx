@@ -49,13 +49,14 @@ const MintTable = () => {
       let lastMintDate = null;
 
       if (lastMintTime?.data && isValidDate(lastMintTime.data)) {
+        
         lastMintDate = new Date(lastMintTime.data).toISOString().split("T")[0]; // Convert last mint date to 'YYYY-MM-DD'
       }
 
-      if (lastMintDate && currentDate === lastMintDate) {
-        toast.error("You can't mint more than once per day.");
-        return;
-      }
+      // if (lastMintDate && currentDate === lastMintDate) {
+      //   toast.error("You can't mint more than once per day.");
+      //   return;
+      // }
 
       const mintApiData = await mintApi(stateData?.walletAddress);
       console.log(mintApiData);

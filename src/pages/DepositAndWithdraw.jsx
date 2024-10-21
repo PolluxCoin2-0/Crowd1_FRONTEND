@@ -38,10 +38,10 @@ const DepositAndWithdraw = () => {
       return;
     }
 
-    if(cycleCount %30 !== 0){
-      toast.error("You can't deposit more than once every 30 days.");
-      return;
-    }
+    // if(cycleCount %30 !== 0){
+    //   toast.error("You can't deposit more than once every 30 days.");
+    //   return;
+    // }
 
     // CHECK POX BALANCE IN USER WALLET
     const userBalance = await window.pox.getDetails();
@@ -91,10 +91,10 @@ const DepositAndWithdraw = () => {
       return;
     }
 
-    if(cycleCount !== 30){
-      toast.error("You can withdraw only when the cycle count is 30");
-      return;
-    }
+    // if(cycleCount !== 30){
+    //   toast.error("You can withdraw only when the cycle count is 30");
+    //   return;
+    // }
 
  try {
   setIsLoading(true);
