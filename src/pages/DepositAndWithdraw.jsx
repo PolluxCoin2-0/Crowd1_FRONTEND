@@ -1,36 +1,63 @@
 import { useSelector } from "react-redux";
-import USDX from "../assets/USDX.png";
+import POX from "../assets/PoxImg.png";
 import { useEffect, useState } from "react";
-import { approveApi, depositFundApi, totalRoiReturnsApi, withdrawFundApi } from "../utils/api/apiFunctions";
+import {
+  depositFundApi,
+  totalRoiReturnsApi,
+  userDetailsApi,
+  withdrawFundApi,
+} from "../utils/api/apiFunctions";
 import { toast } from "react-toastify";
 
 const DepositAndWithdraw = () => {
-  const stateData = useSelector((state)=>state?.wallet?.dataObject);
-  const [depositAmount, setDepositAmount] = useState(20);
+  const stateData = useSelector((state) => state?.wallet?.dataObject);
   const [userTotallROIReturn, setUserTotallROIReturn] = useState(0);
+  const[cycleCount, setCycleCount] = useState(0);
+  const [availableAmount, setAvailableAmount] = useState(0);
+  const [isLoading, setIsLoading] = useState(false);
 
-  const handleDepositFunc = async()=>{
-    if (depositAmount !== 100) {
-      toast.error("The minimum deposit amount must be $100.");
+  const fetchData = async () => {
+    const userROIReturnData = await totalRoiReturnsApi(
+      stateData?.walletAddress
+    );
+    setUserTotallROIReturn(userROIReturnData?.data);
+    const userData = await userDetailsApi(stateData?.walletAddress);
+    setCycleCount(userData?.data?.cycleCount)
+    setAvailableAmount( userData?.data?.depositAmount)
+  };
+
+  useEffect(() => {
+    if(stateData?.walletAddress){
+      fetchData();
+    }
+  }, [stateData?.walletAddress, isLoading]);
+
+  const handleDepositFunc = async () => {
+    if(isLoading){
+      toast.warning("Deposit in progress...");
       return;
-    } 
+    }
 
-    // Approval
-    // const approvalData = await approveApi(stateData?.walletAddress, depositAmount);
-    // console.log("approvalData",approvalData);
+    if(cycleCount %30 !== 0){
+      toast.error("You can't deposit more than once every 30 days.");
+      return;
+    }
 
-    // const signedTransaction = await window.pox.signdata(
-    //     approvalData?.data?.transaction
-    //   );
+    // CHECK POX BALANCE IN USER WALLET
+    const userBalance = await window.pox.getDetails();
+    const poxBalance = userBalance[1]?.data?.Balance
+    if((poxBalance/Math.pow(10,6))<100){
+      toast.error("Insufficient POX balance.");
+      return;
+    }
 
-    //   console.log("signedTransaction: ", signedTransaction);
-
-    //   const broadcast = JSON.stringify(
-    //     await window.pox.broadcast(JSON.parse(signedTransaction[1]))
-    //   );
-
-    //   console.log("broadcast", broadcast);
-    const depositApiData = await depositFundApi(depositAmount, stateData?.referredBy, stateData?.walletAddress);
+    try {
+      setIsLoading(true);
+    const depositApiData = await depositFundApi(
+      100,
+      stateData?.referredBy,
+      stateData?.walletAddress
+    );
     console.log("depositdata", depositApiData?.data?.transaction);
 
     const signedTransaction2 = await window.pox.signdata(
@@ -44,35 +71,54 @@ const DepositAndWithdraw = () => {
     );
 
     console.log("broadcast", broadcast2);
-    toast.success("Deposited successfully.")
-  }
-
-  const handleWithDrawFunc = async()=>{
-    // if(withDrawAmount)
-    const withDrawApiData = await withdrawFundApi(stateData?.walletAddress);
-    console.log(withDrawApiData)
-    const signedTransaction = await window.pox.signdata(
-        withDrawApiData?.data?.transaction
-      );
-
-      console.log("signedTransaction: ", signedTransaction);
-
-      const broadcast = JSON.stringify(
-        await window.pox.broadcast(JSON.parse(signedTransaction[1]))
-      );
-
-      console.log("broadcast", broadcast);
-      toast.success("Withdrawn successfully.")
-  }
-
-  useEffect(()=>{
-    const fetchData = async ()=>{
-      const userROIReturnData = await totalRoiReturnsApi(stateData?.walletAddress);
-      console.log("userROIReturnData: ", userROIReturnData?.data);
-      setUserTotallROIReturn(userROIReturnData?.data);
+    await fetchData();
+    toast.success("Deposited successfully.");
+  } catch (error) {
+    toast.error("Something went wrong")
+  } finally{
+      setIsLoading(false);
     }
-    fetchData();
-    },[])
+  };
+
+  const handleWithDrawFunc = async () => {
+    if (availableAmount == null ||availableAmount <= 0) {
+      toast.error("Insufficient funds.");
+      return;
+    }
+
+    if(isLoading){
+      toast.warning("Withdrawal in progress...");
+      return;
+    }
+
+    if(cycleCount !== 30){
+      toast.error("You can withdraw only when the cycle count is 30");
+      return;
+    }
+
+ try {
+  setIsLoading(true);
+  const withDrawApiData = await withdrawFundApi(stateData?.walletAddress);
+  console.log(withDrawApiData);
+  const signedTransaction = await window.pox.signdata(
+    withDrawApiData?.data?.transaction
+  );
+
+  console.log("signedTransaction: ", signedTransaction);
+
+  const broadcast = JSON.stringify(
+    await window.pox.broadcast(JSON.parse(signedTransaction[1]))
+  );
+
+  console.log("broadcast", broadcast);
+  await fetchData();
+  toast.success("Withdrawn successfully.");
+ } catch (error) {
+  toast.error("Something went wrong")
+ } finally {
+  setIsLoading(false);
+ }
+  };
 
   return (
     <div>
@@ -101,26 +147,22 @@ const DepositAndWithdraw = () => {
             Deposit
           </p>
           <div className="p-8">
-            <p className="text-left text-[#8C8B8B] font-semibold mt-2 tracking-wide">
+            {/* <p className="text-left text-[#8C8B8B] font-semibold mt-2 tracking-wide">
               Min $20 - Max $1000
-            </p>
+            </p> */}
 
-            <div className="mt-6 flex flex-row justify-between items-center space-x-4">
-              <input
-                type="number"
-                placeholder="Enter Amount"
-                value={depositAmount}
-                onChange={(e)=>setDepositAmount(e.target.value)}
-                className="w-full px-4 py-3 text-white bg-[#151515] border border-[#3A3A3C] rounded-lg focus:outline-none focus:ring-2 focus:ring-[#9b9b9b] focus:border-transparent transition-all shadow-inner hover:shadow-lg placeholder-gray-500"
-              />
+            <div className=" flex flex-row justify-between items-center space-x-4">
+              <p className="w-full px-4 py-3 text-white bg-[#151515] border border-[#3A3A3C] rounded-lg focus:outline-none focus:ring-2 focus:ring-[#9b9b9b] focus:border-transparent transition-all shadow-inner hover:shadow-lg placeholder-gray-500">
+                100
+              </p>
               <div className="flex flex-row items-center space-x-2 bg-[#151515] px-4 py-3 rounded-lg border border-[#3A3A3C]">
-                <img src={USDX} alt="USDX" className="w-6 h-6" />
+                <img src={POX} alt="USDX" className="w-6 h-6" />
                 <p className="text-white font-medium pr-4">POX</p>
               </div>
             </div>
 
             <button
-            onClick={handleDepositFunc}
+              onClick={handleDepositFunc}
               className="mt-8 w-full bg-[linear-gradient(to_right,#FFE27A,#FFBA57,#98DB7C,#8BCAFF)] text-black font-bold text-lg py-3 rounded-lg 
               shadow-lg hover:shadow-xl hover:scale-105 transition-transform duration-300 ease-in-out"
             >
@@ -153,23 +195,24 @@ const DepositAndWithdraw = () => {
             WITHDRAW
           </p>
           <div className="p-8">
-            <p className="text-left text-[#8C8B8B] font-semibold mt-2 tracking-wide">
+            {/* <p className="text-left text-[#8C8B8B] font-semibold mt-2 tracking-wide">
             Min $20 - Max $1000
-            </p>
+            </p> */}
 
-            <div className="mt-6 flex flex-row justify-between items-center space-x-4">
-              <p
-                className="w-full px-4 py-3 text-white bg-[#151515] border border-[#3A3A3C] rounded-lg focus:outline-none focus:ring-2 focus:ring-[#9b9b9b] focus:border-transparent transition-all shadow-inner hover:shadow-lg placeholder-gray-500"
-              >{userTotallROIReturn ? userTotallROIReturn : 0}</p>
+            <div className=" flex flex-row justify-between items-center space-x-4">
+              <p className="w-full px-4 py-3 text-white bg-[#151515] border border-[#3A3A3C] rounded-lg focus:outline-none focus:ring-2 focus:ring-[#9b9b9b] focus:border-transparent transition-all shadow-inner hover:shadow-lg placeholder-gray-500">
+                {userTotallROIReturn ? userTotallROIReturn : 0}
+              </p>
               <div className="flex flex-row items-center space-x-2 bg-[#151515] px-4 py-3 rounded-lg border border-[#3A3A3C]">
-                <img src={USDX} alt="USDX" className="w-6 h-6" />
+                <img src={POX} alt="USDX" className="w-6 h-6" />
                 <p className="text-white font-medium pr-4">POX</p>
               </div>
             </div>
 
             <button
-            onClick={handleWithDrawFunc}
-             className="mt-8 w-full bg-[linear-gradient(to_right,#FFE27A,#FFBA57,#98DB7C,#8BCAFF)] text-black font-bold text-lg py-3 rounded-lg shadow-lg hover:shadow-xl hover:scale-105 transition-transform duration-300 ease-in-out">
+              onClick={handleWithDrawFunc}
+              className="mt-8 w-full bg-[linear-gradient(to_right,#FFE27A,#FFBA57,#98DB7C,#8BCAFF)] text-black font-bold text-lg py-3 rounded-lg shadow-lg hover:shadow-xl hover:scale-105 transition-transform duration-300 ease-in-out"
+            >
               Withdraw
             </button>
           </div>

@@ -10,7 +10,6 @@ const BASE_URL = import.meta.env.VITE_BASE_URL;
  * @returns {Promise<object>} - The response data from the API.
  */
 const postRequest = async (endpoint, data) => {
-  console.log(BASE_URL+endpoint, data);
   try {
     const response = await axios.post(`${BASE_URL}${endpoint}`, data);
     return response.data;
@@ -105,7 +104,6 @@ export const withdrawFundApi = async (walletAddress) => {
 
 // MINT
 export const mintApi = async (walletAddress) => {
-  console.log(walletAddress)
   return postRequest(API_ENDPOINTS.mint.userMint, { walletAddress });
 };
 
@@ -138,10 +136,4 @@ export const totalReferralReturnsApi = async (walletAddress) => {
   return postRequest(API_ENDPOINTS.tokenReturns.totalReferralReturns, {
     walletAddress,
   });
-};
-
-// APPROVE DEPOSIT
-export const approveApi = async (walletAddress, amount) => {
-  console.log(walletAddress, amount);
-  return postRequest(API_ENDPOINTS.approve, { walletAddress, amount });
 };

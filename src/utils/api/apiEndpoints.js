@@ -18,7 +18,6 @@ const API_ENDPOINTS = {
     getMintTime:"/getMintDate",
     updateMintTime:"/updateMintDate",
   },
-  approve: "/approvalUSDX",
 };
 
 export default API_ENDPOINTS;

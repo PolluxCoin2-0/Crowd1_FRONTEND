@@ -1,19 +1,34 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { toast } from "react-toastify";
 import { registerApi } from "../utils/api/apiFunctions";
 import { getPolinkweb } from "../utils/connectWallet";
-import { useNavigate } from "react-router-dom";
+import { useLocation, useNavigate } from "react-router-dom";
 import { useDispatch } from "react-redux";
 import { setDataObject } from "../redux/slice";
 
   const Register = () => {
     const [referralWallet, setReferralWallet] = useState("");
     const [myWallet, setMyWallet] = useState("");
+    const [isLoading, setIsLoading] = useState(false);
     const navigate = useNavigate();
+    const location = useLocation();
     const dispatch = useDispatch();
+    const referralAddress = location.state?.referralAddress;
+
+    useEffect(()=>{
+      if(referralAddress){
+        setReferralWallet(referralAddress);
+        toast.info("Referral Code Applied Successfully");
+      }
+    },[])
 
     const handleRegister = async (e) => {
       e.preventDefault(); // Prevent the default form submission
+
+      if(isLoading){
+        toast.warning("Registration in progress");
+        return;
+      }
   
       // Basic validation
       if (!myWallet || !referralWallet) {
@@ -22,6 +37,7 @@ import { setDataObject } from "../redux/slice";
       }
   
       try {
+        setIsLoading(true);
         const response = await registerApi(myWallet, referralWallet);
         console.log(response);
         // Handle successful response
@@ -42,6 +58,8 @@ import { setDataObject } from "../redux/slice";
       } catch (error) {
         console.error("Registration error:", error);
         toast.error("An error occurred during registration.");
+      } finally {
+        setIsLoading(false);
       }
     };
 

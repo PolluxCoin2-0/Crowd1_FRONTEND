@@ -16,9 +16,15 @@ const Home = () => {
   const stateData = useSelector((state) => state?.wallet?.dataObject);
 
   // Function to copy text
-  const handleCopy = (copiedText) => {
-    navigator.clipboard.writeText(copiedText);
-    toast.success("Address copied");
+  const handleRegisterCopy = (copiedText) => {
+    navigator.clipboard.writeText(`https://crowd1.club/referral/${copiedText}`);
+    toast.success("Referral Link Copied");
+  };
+
+  const handleContractCopy = (copiedText) => {
+    const contractLink = `https://poxscan.io/address-account/${copiedText}`;
+    navigator.clipboard.writeText(contractLink);
+    toast.success("Contract Link Copied");
   };
 
   // Function to handle sign out
@@ -66,7 +72,7 @@ const Home = () => {
               color="white"
               size={24}
               className="cursor-pointer"
-              onClick={() => handleCopy(stateData?.walletAddress)}
+              onClick={() => handleRegisterCopy(stateData?.walletAddress)}
             />
           </div>
 
@@ -78,7 +84,7 @@ const Home = () => {
               color="white"
               size={24}
               className="cursor-pointer"
-              onClick={() => handleCopy("PR4fchA4kPy2m7HWuSiEcFz714cAnQcME9")}
+              onClick={() => handleContractCopy(CONTRACT_ADDRESS)}
             />
           </div>
         </div>

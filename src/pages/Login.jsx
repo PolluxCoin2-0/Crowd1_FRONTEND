@@ -3,19 +3,34 @@ import { getPolinkweb } from "../utils/connectWallet";
 import { loginApi } from "../utils/api/apiFunctions";
 import { useDispatch } from "react-redux";
 import { setDataObject } from "../redux/slice";
+import { toast } from "react-toastify";
+import { useState } from "react";
 
 const Login = () => {
+  const [isLoading, setIsLoading] = useState(false);
   const navigate = useNavigate();
   const dispatch = useDispatch();
 
   const handleLogin = async()=>{
+    if(isLoading){
+      toast.warning("Login in progress");
+      return;
+    }
+
     const walletAddress = await getPolinkweb();
     if(walletAddress){
-      const apiData = await loginApi(walletAddress);
+      try {
+        setIsLoading(true);
+        const apiData = await loginApi(walletAddress);
       if(apiData?.data?.walletAddress){
         //save apiResponse object in state management redux
         dispatch(setDataObject(apiData?.data));
         navigate("/home");
+      }
+      } catch (error) {
+        toast.error("Wallet address is not registered!")
+      } finally {
+        setIsLoading(false);
       }
     }
   }
