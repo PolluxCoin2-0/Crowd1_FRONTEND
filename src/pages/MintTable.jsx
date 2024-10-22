@@ -7,6 +7,7 @@ import {
 } from "../utils/api/apiFunctions";
 import { toast } from "react-toastify";
 import { useEffect, useState } from "react";
+import Loader from "../components/Loader";
 
 const MintTable = () => {
   const stateData = useSelector((state) => state?.wallet?.dataObject);
@@ -133,7 +134,11 @@ const MintTable = () => {
                   onClick={handldeMintFunc}
                   className="bg-[linear-gradient(to_right,#FFE27A,#FFBA57,#98DB7C,#8BCAFF)] text-black font-bold py-2 px-8 rounded-lg shadow-lg hover:shadow-xl hover:scale-105 transition-transform duration-300"
                 >
-                  Mint
+                   {
+                isLoading? (
+                  <Loader/>
+                ) : " Mint"
+              }
                 </button>
               </td>
             </tr>
