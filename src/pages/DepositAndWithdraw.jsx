@@ -52,6 +52,7 @@ const DepositAndWithdraw = () => {
     const poxBalance = userBalance[1]?.data?.Balance
     if((poxBalance/Math.pow(10,6))<100){
       toast.error("Insufficient POX balance.");
+      setIsLoading(false);
       return;
     }
 
@@ -91,6 +92,7 @@ const DepositAndWithdraw = () => {
 
     if(withdrawLoading){
       toast.warning("Withdrawal in progress...");
+      setWithdrawLoading(false);
       return;
     }
 
