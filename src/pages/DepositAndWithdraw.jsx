@@ -3,8 +3,8 @@ import POX from "../assets/PoxImg.png";
 import { useEffect, useState } from "react";
 import {
   depositFundApi,
-  totalRoiReturnsApi,
   userDetailsApi,
+  userTotalReturnsApi,
   withdrawFundApi,
 } from "../utils/api/apiFunctions";
 import { toast } from "react-toastify";
@@ -19,7 +19,7 @@ const DepositAndWithdraw = () => {
   const [withdrawLoading, setWithdrawLoading] = useState(false);
 
   const fetchData = async () => {
-    const userROIReturnData = await totalRoiReturnsApi(
+    const userROIReturnData = await userTotalReturnsApi(
       stateData?.walletAddress
     );
     setUserTotallROIReturn(userROIReturnData?.data);
