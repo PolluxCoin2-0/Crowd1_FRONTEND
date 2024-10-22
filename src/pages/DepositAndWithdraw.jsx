@@ -8,6 +8,7 @@ import {
   withdrawFundApi,
 } from "../utils/api/apiFunctions";
 import { toast } from "react-toastify";
+import Loader from "../components/Loader"
 
 const DepositAndWithdraw = () => {
   const stateData = useSelector((state) => state?.wallet?.dataObject);
@@ -15,6 +16,7 @@ const DepositAndWithdraw = () => {
   const[cycleCount, setCycleCount] = useState(0);
   const [availableAmount, setAvailableAmount] = useState(0);
   const [isLoading, setIsLoading] = useState(false);
+  const [withdrawLoading, setWithdrawLoading] = useState(false);
 
   const fetchData = async () => {
     const userROIReturnData = await totalRoiReturnsApi(
@@ -43,6 +45,8 @@ const DepositAndWithdraw = () => {
     //   return;
     // }
 
+    setIsLoading(true);
+
     // CHECK POX BALANCE IN USER WALLET
     const userBalance = await window.pox.getDetails();
     const poxBalance = userBalance[1]?.data?.Balance
@@ -52,7 +56,6 @@ const DepositAndWithdraw = () => {
     }
 
     try {
-      setIsLoading(true);
     const depositApiData = await depositFundApi(
       100,
       stateData?.referredBy,
@@ -86,7 +89,7 @@ const DepositAndWithdraw = () => {
       return;
     }
 
-    if(isLoading){
+    if(withdrawLoading){
       toast.warning("Withdrawal in progress...");
       return;
     }
@@ -97,7 +100,7 @@ const DepositAndWithdraw = () => {
     // }
 
  try {
-  setIsLoading(true);
+  setWithdrawLoading(true);
   const withDrawApiData = await withdrawFundApi(stateData?.walletAddress);
   console.log(withDrawApiData);
   const signedTransaction = await window.pox.signdata(
@@ -116,7 +119,7 @@ const DepositAndWithdraw = () => {
  } catch (error) {
   toast.error("Something went wrong")
  } finally {
-  setIsLoading(false);
+  setWithdrawLoading(false);
  }
   };
 
@@ -166,7 +169,12 @@ const DepositAndWithdraw = () => {
               className="mt-8 w-full bg-[linear-gradient(to_right,#FFE27A,#FFBA57,#98DB7C,#8BCAFF)] text-black font-bold text-lg py-3 rounded-lg 
               shadow-lg hover:shadow-xl hover:scale-105 transition-transform duration-300 ease-in-out"
             >
-              Deposit
+               {
+                isLoading? (
+                  <Loader/>
+                ) : "Deposit"
+              }
+              
             </button>
           </div>
         </div>
@@ -213,7 +221,11 @@ const DepositAndWithdraw = () => {
               onClick={handleWithDrawFunc}
               className="mt-8 w-full bg-[linear-gradient(to_right,#FFE27A,#FFBA57,#98DB7C,#8BCAFF)] text-black font-bold text-lg py-3 rounded-lg shadow-lg hover:shadow-xl hover:scale-105 transition-transform duration-300 ease-in-out"
             >
-              Withdraw
+               {
+                withdrawLoading? (
+                  <Loader/>
+                ) : "Withdraw"
+              }
             </button>
           </div>
         </div>
