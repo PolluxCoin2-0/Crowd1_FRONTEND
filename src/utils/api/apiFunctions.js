@@ -4,14 +4,24 @@ import API_ENDPOINTS from "./apiEndpoints"; // Import the API endpoints
 const BASE_URL = import.meta.env.VITE_BASE_URL;
 
 /**
- * Generic POST request handler
+ * Generic POST request handler with token authentication
  * @param {string} endpoint - The API endpoint to call (without base URL).
  * @param {object} data - Data to send in the POST request.
+ * @param {string} token - The authentication token to be included in headers.
  * @returns {Promise<object>} - The response data from the API.
  */
-const postRequest = async (endpoint, data) => {
+const postRequest = async (endpoint, data, token) => {
   try {
-    const response = await axios.post(`${BASE_URL}${endpoint}`, data);
+    const response = await axios.post(
+      `${BASE_URL}${endpoint}`,
+      data,
+      {
+        headers: {
+          Authorization: `Bearer ${token}`,  // Include the token in the Authorization header
+          'Content-Type': 'application/json',  // Optional: Set content type to JSON
+        },
+      }
+    );
     return response.data;
   } catch (error) {
     console.error(
@@ -136,4 +146,22 @@ export const totalReferralReturnsApi = async (walletAddress) => {
   return postRequest(API_ENDPOINTS.tokenReturns.totalReferralReturns, {
     walletAddress,
   });
+};
+
+// SAVE DATA TO DB
+export const saveDataToDBApi = async(cycleNo, amount, interest, totalEarning, investmentDate, maturityDays, token) =>{
+  console.log(cycleNo, amount, interest, totalEarning, investmentDate, maturityDays, token)
+  return postRequest(API_ENDPOINTS.DB.saveToDB, {
+    "cycleNo": cycleNo,
+    "amount": amount,
+    "interest": interest,
+    "totalEarning": totalEarning,
+    "investmentDate":investmentDate,
+    "maturityDays": maturityDays
+  }, token);
+}
+
+// GET DATA FROM DB
+export const getDataFromDBApi = async (token) => {
+  return getRequest(API_ENDPOINTS.DB.getFromDB, token);
 };

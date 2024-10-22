@@ -14,17 +14,16 @@ const DepositAndWithdraw = () => {
   const stateData = useSelector((state) => state?.wallet?.dataObject);
   const [userTotallROIReturn, setUserTotallROIReturn] = useState(0);
   const[cycleCount, setCycleCount] = useState(0);
+  const [mintCount, setMintCount] = useState(0);
   const [availableAmount, setAvailableAmount] = useState(0);
   const [isLoading, setIsLoading] = useState(false);
   const [withdrawLoading, setWithdrawLoading] = useState(false);
 
   const fetchData = async () => {
-    const userROIReturnData = await userTotalReturnsApi(
-      stateData?.walletAddress
-    );
-    setUserTotallROIReturn(userROIReturnData?.data);
     const userData = await userDetailsApi(stateData?.walletAddress);
+    setUserTotallROIReturn(userData?.data?.previousDepositAmount + userData?.data?.previousReward);
     setCycleCount(userData?.data?.cycleCount)
+    setMintCount(userData?.data?.mintCount)
     setAvailableAmount( userData?.data?.depositAmount)
   };
 
@@ -40,8 +39,8 @@ const DepositAndWithdraw = () => {
       return;
     }
 
-    // if(cycleCount %30 !== 0){
-    //   toast.error("You can't deposit more than once every 30 days.");
+    // if(cycleCount % (30 + (cycleCount - 1) * 10) !== 0){
+    //   toast.error(`You can't deposit more than once every ${(30 + (cycleCount - 1) * 10)} days.`);
     //   return;
     // }
 
@@ -96,10 +95,10 @@ const DepositAndWithdraw = () => {
       return;
     }
 
-    // if(cycleCount !== 30){
-    //   toast.error("You can withdraw only when the cycle count is 30");
-    //   return;
-    // }
+    if (mintCount !== 30 + (cycleCount - 1) * 10) {
+      toast.error(`You can withdraw only when the mint count is ${30 + (cycleCount - 1) * 10}`);
+      return;
+    }    
 
  try {
   setWithdrawLoading(true);

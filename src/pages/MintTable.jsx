@@ -1,7 +1,9 @@
 import { useSelector } from "react-redux";
 import {
+  getDataFromDBApi,
   getUserMintedTimeApi,
   mintApi,
+  saveDataToDBApi,
   updateUserMintedTimeApi,
   userDetailsApi,
 } from "../utils/api/apiFunctions";
@@ -17,14 +19,32 @@ const MintTable = () => {
   const fetchData = async () => {
     const userDataApi = await userDetailsApi(stateData?.walletAddress);
     setUserDataApi(userDataApi?.data); // Set user data to state variable
+    // GET THE DATA FROM DB
+    const userDataFromDB = await getDataFromDBApi(stateData?.token);
+    console.log({userDataFromDB})
   };
-
 
   useEffect(() => {
     if (stateData?.walletAddress) {
       fetchData();
     }
   }, [isLoading]);
+
+  const getFormattedDate = () => {
+    const now = new Date();
+  
+    // Get the offset in minutes and convert it to hours and minutes
+    const offset = -now.getTimezoneOffset();
+    const offsetHours = Math.floor(Math.abs(offset) / 60).toString().padStart(2, '0');
+    const offsetMinutes = (Math.abs(offset) % 60).toString().padStart(2, '0');
+    const offsetSign = offset >= 0 ? '+' : '-';
+  
+    // Format the date as YYYY-MM-DDTHH:mm:ss
+    const formattedDate = now.toISOString().replace(/\.\d{3}Z$/, '');
+  
+    // Append the timezone offset
+    return `${formattedDate}${offsetSign}${offsetHours}:${offsetMinutes}`;
+  };
 
   const handldeMintFunc = async () => {
     if (userDataApi?.depositAmount == null || userDataApi.depositAmount <= 0) {
@@ -74,11 +94,34 @@ const MintTable = () => {
 
       console.log("broadcast", broadcast);
 
-      // update user mint time
-      const updateMintedUserData = await updateUserMintedTimeApi(
+       // update user mint time
+       const updateMintedUserData = await updateUserMintedTimeApi(
         stateData?.token
       );
       console.log("updateMintedUserData: ", updateMintedUserData);
+
+      // Calculate the threshold based on cycleCount
+      const mintThreshold = (30 + (userDataApi?.cycleCount - 1) * 10);
+      // if(userDataApi.mintCount=== mintThreshold-1){
+        // SAVE TO DB
+        const time = getFormattedDate()
+        try {
+        const saveDataToDB = await saveDataToDBApi(
+          userDataApi?.cycleCount, 
+          userDataApi?.depositAmount, 
+          30, 
+          userDataApi?.totalReward,
+          time, 
+          mintThreshold,
+          stateData?.token
+        )
+        toast.success("save to DB success")
+        console.log("savedData: ", saveDataToDB);
+        } catch (error) {
+          console.log(error);
+          toast.error("Error saving to DB.");
+        }
+      // } 
       await fetchData();
       toast.success("Minted successfully.");
     } catch (error) {
@@ -127,7 +170,7 @@ const MintTable = () => {
               </td>
               <td className="py-4 px-6 text-center">
                 {" "}
-                {userDataApi?.cycleCount ? `${userDataApi.mintCount}/30` : 0}
+                {userDataApi?.mintCount ? `${userDataApi.mintCount}/${30 + (userDataApi?.cycleCount-1) * 10}` : 0}
               </td>
               <td className="py-4 px-6 text-right">
                 <button
