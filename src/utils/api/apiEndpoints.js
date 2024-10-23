@@ -21,6 +21,9 @@ const API_ENDPOINTS = {
   DB:{
     saveToDB : "/createCycle",
     getFromDB : "/getAllCycles"
+  },
+  referral :{
+    directReferral : "/getAllReferrals"
   }
 };
 

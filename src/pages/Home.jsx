@@ -8,13 +8,16 @@ import { setDataObject } from "../redux/slice";
 // Action to clear the wallet data
 import LogoImage from "../assets/Logo.png";
 import { Link } from "react-router-dom";
+import { useEffect, useState } from "react";
 
 const CONTRACT_ADDRESS = import.meta.env.VITE_CONTRACT_ADDRESS;
 
 const Home = () => {
   const dispatch = useDispatch();
   const stateData = useSelector((state) => state?.wallet?.dataObject);
+  const [globalLoading, setGlobalLoading] = useState(false);
 
+  useEffect(()=>{},[globalLoading])
   // Function to copy text
   const handleRegisterCopy = (copiedText) => {
     navigator.clipboard.writeText(`https://crowd1dev.netlify.app/referral/${copiedText}`);
@@ -43,9 +46,9 @@ const Home = () => {
         `,
         }}
       >
-        <div>
+        <Link to = "/home">
           <img src={LogoImage} alt="crowd1-logo" className="w-[80%] md:w-full" />
-        </div>
+        </Link>
 
         <Link to="/">
           <div>
@@ -90,13 +93,13 @@ const Home = () => {
         </div>
 
         {/* Blocks */}
-        <Blocks />
+        <Blocks globalLoading={globalLoading} />
 
         {/* Deposit and Withdraw */}
-        <DepositAndWithdraw />
+        <DepositAndWithdraw globalLoading={globalLoading} setGlobalLoading={setGlobalLoading}/>
 
         {/* Table */}
-        <MintTable />
+        <MintTable globalLoading={globalLoading} setGlobalLoading={setGlobalLoading}/>
       </div>
     </div>
   );

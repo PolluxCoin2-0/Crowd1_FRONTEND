@@ -3,38 +3,45 @@ import POX from "../assets/PoxImg.png";
 import { useEffect, useState } from "react";
 import {
   depositFundApi,
+  totalReferralReturnsApi,
   userDetailsApi,
-  userTotalReturnsApi,
   withdrawFundApi,
 } from "../utils/api/apiFunctions";
 import { toast } from "react-toastify";
-import Loader from "../components/Loader"
+import Loader from "../components/Loader";
 
-const DepositAndWithdraw = () => {
+const DepositAndWithdraw = ({ globalLoading, setGlobalLoading }) => {
   const stateData = useSelector((state) => state?.wallet?.dataObject);
   const [userTotallROIReturn, setUserTotallROIReturn] = useState(0);
-  const[cycleCount, setCycleCount] = useState(0);
+  const [cycleCount, setCycleCount] = useState(0);
   const [mintCount, setMintCount] = useState(0);
   const [availableAmount, setAvailableAmount] = useState(0);
   const [isLoading, setIsLoading] = useState(false);
   const [withdrawLoading, setWithdrawLoading] = useState(false);
+  const [isDeposit, setIsDeposit] = useState(false);
 
   const fetchData = async () => {
+   const referralAmount = await totalReferralReturnsApi(stateData?.walletAddress);
     const userData = await userDetailsApi(stateData?.walletAddress);
-    setUserTotallROIReturn(userData?.data?.previousDepositAmount + userData?.data?.previousReward);
-    setCycleCount(userData?.data?.cycleCount)
-    setMintCount(userData?.data?.mintCount)
-    setAvailableAmount( userData?.data?.depositAmount)
+    console.log({ userData });
+    setUserTotallROIReturn(
+      userData?.data?.previousDepositAmount + userData?.data?.previousReward + referralAmount?.data
+    );
+    setCycleCount(userData?.data?.cycleCount);
+    setMintCount(userData?.data?.mintCount);
+    setAvailableAmount(userData?.data?.depositAmount);
+    setIsDeposit(userData?.data?.hasNewDeposit)
+    setGlobalLoading(!globalLoading);
   };
 
   useEffect(() => {
-    if(stateData?.walletAddress){
+    if (stateData?.walletAddress) {
       fetchData();
     }
-  }, [stateData?.walletAddress, isLoading]);
+  }, [stateData?.walletAddress, isLoading,]);
 
   const handleDepositFunc = async () => {
-    if(isLoading){
+    if (isLoading) {
       toast.warning("Deposit in progress...");
       return;
     }
@@ -48,80 +55,93 @@ const DepositAndWithdraw = () => {
 
     // CHECK POX BALANCE IN USER WALLET
     const userBalance = await window.pox.getDetails();
-    const poxBalance = userBalance[1]?.data?.Balance
-    if((poxBalance/Math.pow(10,6))<100){
+    const poxBalance = userBalance[1]?.data?.Balance;
+    if (poxBalance / Math.pow(10, 6) < 100) {
       toast.error("Insufficient POX balance.");
       setIsLoading(false);
       return;
     }
 
     try {
-    const depositApiData = await depositFundApi(
-      100,
-      stateData?.referredBy,
-      stateData?.walletAddress
-    );
-    console.log("depositdata", depositApiData?.data?.transaction);
+      const depositApiData = await depositFundApi(
+        100,
+        stateData?.referredBy,
+        stateData?.walletAddress
+      );
+      console.log("depositdata", depositApiData?.data?.transaction);
 
-    const signedTransaction2 = await window.pox.signdata(
-      depositApiData?.data?.transaction
-    );
+      const signedTransaction2 = await window.pox.signdata(
+        depositApiData?.data?.transaction
+      );
 
-    console.log("signedTransaction: ", signedTransaction2);
+      console.log("signedTransaction: ", signedTransaction2);
 
-    const broadcast2 = JSON.stringify(
-      await window.pox.broadcast(JSON.parse(signedTransaction2[1]))
-    );
+      const broadcast2 = await window.pox.broadcast(
+        JSON.parse(signedTransaction2[1])
+      );
+      if (broadcast2[2] !== "Broadcast Successfully Done") {
+        setIsLoading(false);
+        toast.error("Failed to broadcast the transaction.");
+        return;
+      }
 
-    console.log("broadcast", broadcast2);
-    await fetchData();
-    toast.success("Deposited successfully.");
-  } catch (error) {
-    toast.error("Something went wrong")
-  } finally{
+      console.log("broadcast", broadcast2);
+      await fetchData();
+      toast.success("Deposited successfully.");
+    } catch (error) {
+      toast.error("Something went wrong");
+    } finally {
       setIsLoading(false);
     }
   };
 
   const handleWithDrawFunc = async () => {
-    if (availableAmount == null ||availableAmount <= 0) {
+    if (availableAmount == null || availableAmount <= 0) {
       toast.error("Insufficient funds.");
       return;
     }
 
-    if(withdrawLoading){
+    if(!isDeposit){
+      toast.error("First, make a new deposit.");
+      return;
+    }
+
+    // direct referral checking
+
+    if (withdrawLoading) {
       toast.warning("Withdrawal in progress...");
       setWithdrawLoading(false);
       return;
     }
 
-    if (mintCount !== 30 + (cycleCount - 1) * 10) {
-      toast.error(`You can withdraw only when the mint count is ${30 + (cycleCount - 1) * 10}`);
-      return;
-    }    
+    try {
+      setWithdrawLoading(true);
+      const withDrawApiData = await withdrawFundApi(stateData?.walletAddress);
+      console.log(withDrawApiData);
+      const signedTransaction = await window.pox.signdata(
+        withDrawApiData?.data?.transaction
+      );
 
- try {
-  setWithdrawLoading(true);
-  const withDrawApiData = await withdrawFundApi(stateData?.walletAddress);
-  console.log(withDrawApiData);
-  const signedTransaction = await window.pox.signdata(
-    withDrawApiData?.data?.transaction
-  );
+      console.log("signedTransaction: ", signedTransaction);
 
-  console.log("signedTransaction: ", signedTransaction);
+      const broadcast = await window.pox.broadcast(
+        JSON.parse(signedTransaction[1])
+      );
 
-  const broadcast = JSON.stringify(
-    await window.pox.broadcast(JSON.parse(signedTransaction[1]))
-  );
+      if (broadcast[2] !== "Broadcast Successfully Done") {
+        setWithdrawLoading(false);
+        toast.error("Failed to broadcast the transaction.");
+        return;
+      }
 
-  console.log("broadcast", broadcast);
-  await fetchData();
-  toast.success("Withdrawn successfully.");
- } catch (error) {
-  toast.error("Something went wrong")
- } finally {
-  setWithdrawLoading(false);
- }
+      console.log("broadcast", broadcast);
+      await fetchData();
+      toast.success("Withdrawn successfully.");
+    } catch (error) {
+      toast.error("Something went wrong");
+    } finally {
+      setWithdrawLoading(false);
+    }
   };
 
   return (
@@ -170,12 +190,7 @@ const DepositAndWithdraw = () => {
               className="mt-8 w-full bg-[linear-gradient(to_right,#FFE27A,#FFBA57,#98DB7C,#8BCAFF)] text-black font-bold text-lg py-3 rounded-lg 
               shadow-lg hover:shadow-xl hover:scale-105 transition-transform duration-300 ease-in-out"
             >
-               {
-                isLoading? (
-                  <Loader/>
-                ) : "Deposit"
-              }
-              
+              {isLoading ? <Loader /> : "Deposit"}
             </button>
           </div>
         </div>
@@ -222,11 +237,7 @@ const DepositAndWithdraw = () => {
               onClick={handleWithDrawFunc}
               className="mt-8 w-full bg-[linear-gradient(to_right,#FFE27A,#FFBA57,#98DB7C,#8BCAFF)] text-black font-bold text-lg py-3 rounded-lg shadow-lg hover:shadow-xl hover:scale-105 transition-transform duration-300 ease-in-out"
             >
-               {
-                withdrawLoading? (
-                  <Loader/>
-                ) : "Withdraw"
-              }
+              {withdrawLoading ? <Loader /> : "Withdraw"}
             </button>
           </div>
         </div>
