@@ -4,14 +4,20 @@ import API_ENDPOINTS from "./apiEndpoints"; // Import the API endpoints
 const BASE_URL = import.meta.env.VITE_BASE_URL;
 
 /**
- * Generic POST request handler
+ * Generic POST request handler with token authentication
  * @param {string} endpoint - The API endpoint to call (without base URL).
  * @param {object} data - Data to send in the POST request.
+ * @param {string} token - The authentication token to be included in headers.
  * @returns {Promise<object>} - The response data from the API.
  */
-const postRequest = async (endpoint, data) => {
+const postRequest = async (endpoint, data, token) => {
   try {
-    const response = await axios.post(`${BASE_URL}${endpoint}`, data);
+    const response = await axios.post(`${BASE_URL}${endpoint}`, data, {
+      headers: {
+        Authorization: `Bearer ${token}`, // Include the token in the Authorization header
+        "Content-Type": "application/json", // Optional: Set content type to JSON
+      },
+    });
     return response.data;
   } catch (error) {
     console.error(
@@ -29,19 +35,17 @@ const postRequest = async (endpoint, data) => {
  * @param {object} [params] - Query parameters to send in the GET request.
  * @returns {Promise<object>} - The response data from the API.
  */
-const getRequest = async (endpoint, token) => {
+const getRequest = async (endpoint, token, params = {}) => {
   try {
     const response = await axios.get(`${BASE_URL}${endpoint}`, {
       headers: {
         Authorization: `Bearer ${token}`,
       },
+      params, // Add query parameters here
     });
     return response.data;
   } catch (error) {
-    console.error(
-      `Error in GET ${endpoint}:`,
-      error.response || error.message
-    );
+    console.error(`Error in GET ${endpoint}:`, error.response || error.message);
     throw error;
   }
 };
@@ -54,11 +58,15 @@ const getRequest = async (endpoint, token) => {
  */
 const putRequest = async (endpoint, token) => {
   try {
-    const response = await axios.put(`${BASE_URL}${endpoint}`,{},{
-      headers: {
-        Authorization: `Bearer ${token}`,
-      },
-    });
+    const response = await axios.put(
+      `${BASE_URL}${endpoint}`,
+      {},
+      {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      }
+    );
     return response.data;
   } catch (error) {
     console.error(`Error in PUT ${endpoint}:`, error.response || error.message);
@@ -135,5 +143,41 @@ export const totalRoiReturnsApi = async (walletAddress) => {
 export const totalReferralReturnsApi = async (walletAddress) => {
   return postRequest(API_ENDPOINTS.tokenReturns.totalReferralReturns, {
     walletAddress,
+  });
+};
+
+// SAVE DATA TO DB
+export const saveDataToDBApi = async (
+  cycleNo,
+  amount,
+  interest,
+  totalEarning,
+  investmentDate,
+  maturityDays,
+  token
+) => {
+  return postRequest(
+    API_ENDPOINTS.DB.saveToDB,
+    {
+      cycleNo: cycleNo,
+      amount: amount,
+      interest: interest,
+      totalEarning: totalEarning,
+      investmentDate: investmentDate,
+      maturityDays: maturityDays,
+    },
+    token
+  );
+};
+
+// GET DATA FROM DB
+export const getDataFromDBApi = async (token) => {
+  return getRequest(API_ENDPOINTS.DB.getFromDB, token);
+};
+
+// GET DIRECT REFERRALS
+export const getDataOfDirectReferral = async (token) => {
+  return getRequest(API_ENDPOINTS.referral.directReferral, token, {
+    search: "",
   });
 };

@@ -7,27 +7,28 @@ import { useSelector } from "react-redux";
 import POX from "../assets/PoxImg.png";
 import { AiFillBank } from "react-icons/ai";
 
-const Blocks = () => {
+const Blocks = ({globalLoading}) => {
   const [userCrowd1Balance, setCrowd1Balance] = useState(0);
-  const [userReferralBalance, setUserReferralBalance] = useState(0);
-  const [poolRewardAmount, setPoolRewardAmount] = useState(0);
+  const [poolRewardAmount, setPoolRewardAmount] = useState({});
+  const [referralAmount, setReferralAmount] = useState(0);
   const stateData = useSelector((state)=>state?.wallet?.dataObject)
 
   useEffect(()=>{
     const fetchData = async()=>{
+      console.log("blocks data fetched")
      // User Crowd1 Balance
      const crowd1BalanceData = await userTotalReturnsApi(stateData?.walletAddress);
      setCrowd1Balance(crowd1BalanceData?.data);
     //  User Total Referral Earnings
-    const referralBalance = await totalReferralReturnsApi(stateData?.walletAddress);
-    setUserReferralBalance(referralBalance?.data);
     const userPoolRewardData = await userDetailsApi(stateData?.walletAddress);
-   setPoolRewardAmount(userPoolRewardData?.data?.poolReward)
+   setPoolRewardAmount(userPoolRewardData?.data)
+   const referralAmount = await totalReferralReturnsApi(stateData?.walletAddress);
+   setReferralAmount(referralAmount?.data)
     }
     if(stateData?.walletAddress){
       fetchData();
     }
-  }, [stateData?.walletAddress])
+  }, [stateData?.walletAddress,globalLoading])
 
   return (
     <div>
@@ -73,11 +74,11 @@ const Blocks = () => {
           <div className="flex flex-row items-center space-x-2">
           <img src={POX} alt="USDX" className="w-8 h-8" />
             <p className="text-md md:text-2xl lg:text-xl xl:text-4xl text-white font-bold pb-2 md:pb-0">
-               {userReferralBalance}
+               {poolRewardAmount?.silverPoolReward ? poolRewardAmount?.silverPoolReward : 0}
             </p>
             </div>
             <p className="text-[#8C8B8B] text-xs md:text-lg font-semibold mt-0 md:mt-3 text-nowrap">
-              Your Referral Earnings
+            Your Gold Pool Reward
             </p>
           </div>
           <div className="bg-[#202020] rounded-full p-[8px]">
@@ -99,12 +100,12 @@ const Blocks = () => {
           <div className="flex flex-row items-center space-x-2">
           <img src={POX} alt="USDX" className="w-8 h-8" />
             <p className="text-md md:text-2xl lg:text-xl xl:text-4xl text-white font-bold pb-2 md:pb-0">
-               {poolRewardAmount}
+               {poolRewardAmount?.goldPoolReward ? poolRewardAmount?.goldPoolReward :0}
             </p>
 
             </div>
             <p className="text-[#8C8B8B] text-xs md:text-lg font-semibold mt-0 md:mt-3 text-nowrap">
-              Your Pool Reward
+              Your Silver Pool Reward
             </p>
           </div>
           <div className="bg-[#202020] rounded-full p-[8px]">
@@ -124,17 +125,17 @@ const Blocks = () => {
         >
           <div>
             <p className="text-md md:text-2xl lg:text-xl xl:text-4xl text-white font-bold pb-2 md:pb-0">
-              00
+             $ {referralAmount ? (Number(referralAmount).toFixed(4)) :0}
             </p>
             <p className="text-[#8C8B8B] text-xs md:text-lg font-semibold mt-0 md:mt-3 text-nowrap">
-              Your Referral Wallets
+              Your Total Referral Earning
             </p>
           </div>
-          {/* <Link to="/referralearning"> */}
+          <Link to="/referralearning">
             <div className="bg-[#202020] cursor-pointer rounded-full p-[8px]">
               <p className="text-sm p-1 text-[#8C8B8B] font-semibold">View</p>
             </div>
-          {/* </Link> */}
+          </Link>
         </div>
       </div>
     </div>

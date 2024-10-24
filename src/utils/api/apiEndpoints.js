@@ -18,6 +18,13 @@ const API_ENDPOINTS = {
     getMintTime:"/getMintDate",
     updateMintTime:"/updateMintDate",
   },
+  DB:{
+    saveToDB : "/createCycle",
+    getFromDB : "/getAllCycles"
+  },
+  referral :{
+    directReferral : "/getAllReferrals"
+  }
 };
 
 export default API_ENDPOINTS;

@@ -5,11 +5,13 @@ import { getPolinkweb } from "../utils/connectWallet";
 import { useLocation, useNavigate } from "react-router-dom";
 import { useDispatch } from "react-redux";
 import { setDataObject } from "../redux/slice";
+import Loader from "../components/Loader";
 
   const Register = () => {
     const [referralWallet, setReferralWallet] = useState("");
     const [myWallet, setMyWallet] = useState("");
     const [isLoading, setIsLoading] = useState(false);
+    const [walletLoading, setWalletLoading] = useState(false);
     const navigate = useNavigate();
     const location = useLocation();
     const dispatch = useDispatch();
@@ -64,10 +66,23 @@ import { setDataObject } from "../redux/slice";
     };
 
     const handleWalletAddress =async()=>{
-      const walletAddress = await getPolinkweb();
-      if(walletAddress){
-        setMyWallet(walletAddress);
+      if(walletLoading){
+        toast.warning("Fetching wallet address...");
+        return;
       }
+
+      setWalletLoading(true);
+      try {
+        const walletAddress = await getPolinkweb();
+        if(walletAddress){
+          setMyWallet(walletAddress);
+        }
+      } catch (error) {
+        toast.error("Something went wrong")
+      } finally {
+        setWalletLoading(false);
+      }
+     
     }
 
 
@@ -113,7 +128,12 @@ import { setDataObject } from "../redux/slice";
               className="whitespace-nowrap bg-[linear-gradient(to_right,#FFE27A,#FFBA57,#98DB7C,#8BCAFF)] text-black font-bold py-3 px-4 sm:px-6 
             rounded-full shadow-lg hover:shadow-xl transition-all w-full"
             >
-             Register
+               {
+                isLoading? (
+                  <Loader/>
+                ) : "Register"
+              }
+           
             </button>
           </div>
         </div>

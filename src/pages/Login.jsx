@@ -5,6 +5,7 @@ import { useDispatch } from "react-redux";
 import { setDataObject } from "../redux/slice";
 import { toast } from "react-toastify";
 import { useState } from "react";
+import Loader from "../components/Loader"
 
 const Login = () => {
   const [isLoading, setIsLoading] = useState(false);
@@ -57,7 +58,12 @@ const Login = () => {
              shadow-lg hover:shadow-xl transition-all w-full md:w-1/2"
              onClick={handleLogin}
              >
-              Connect Wallet
+              {
+                isLoading? (
+                  <Loader/>
+                ) : " Connect Wallet"
+              }
+             
             </button>
           </div>
         </div>

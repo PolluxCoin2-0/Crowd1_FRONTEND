@@ -3,121 +3,178 @@ import POX from "../assets/PoxImg.png";
 import { useEffect, useState } from "react";
 import {
   depositFundApi,
-  totalRoiReturnsApi,
+  getDataOfDirectReferral,
+  totalReferralReturnsApi,
   userDetailsApi,
   withdrawFundApi,
 } from "../utils/api/apiFunctions";
 import { toast } from "react-toastify";
+import Loader from "../components/Loader";
 
-const DepositAndWithdraw = () => {
+const DepositAndWithdraw = ({ globalLoading, setGlobalLoading }) => {
   const stateData = useSelector((state) => state?.wallet?.dataObject);
   const [userTotallROIReturn, setUserTotallROIReturn] = useState(0);
-  const[cycleCount, setCycleCount] = useState(0);
+  const [cycleCount, setCycleCount] = useState(0);
+  const [preCycleCount, setPreCycleCount] = useState(0);
+  const [mintCount, setMintCount] = useState(0);
   const [availableAmount, setAvailableAmount] = useState(0);
   const [isLoading, setIsLoading] = useState(false);
+  const [withdrawLoading, setWithdrawLoading] = useState(false);
+  const [isDeposit, setIsDeposit] = useState(false);
+  const [directReferralCount, setDirectReferralCount] = useState(0);
 
   const fetchData = async () => {
-    const userROIReturnData = await totalRoiReturnsApi(
+    const referralAmount = await totalReferralReturnsApi(
       stateData?.walletAddress
     );
-    setUserTotallROIReturn(userROIReturnData?.data);
     const userData = await userDetailsApi(stateData?.walletAddress);
-    setCycleCount(userData?.data?.cycleCount)
-    setAvailableAmount( userData?.data?.depositAmount)
+    console.log({ userData });
+    setUserTotallROIReturn(
+      userData?.data?.previousDepositAmount +
+        userData?.data?.previousReward +
+        referralAmount?.data
+    );
+    setCycleCount(userData?.data?.cycleCount);
+    setMintCount(userData?.data?.mintCount);
+    setAvailableAmount(userData?.data?.depositAmount);
+    setIsDeposit(userData?.data?.hasNewDeposit);
+    setPreCycleCount(userData?.data?.preCycleCount);
+    const directReferralData = await getDataOfDirectReferral(stateData?.token);
+    setDirectReferralCount(directReferralData?.data?.leve1Count);
   };
 
   useEffect(() => {
-    if(stateData?.walletAddress){
+    if (stateData?.walletAddress) {
       fetchData();
     }
-  }, [stateData?.walletAddress, isLoading]);
+  }, [stateData?.walletAddress, isLoading, globalLoading]);
 
+  // DEPOSIT FUNCTION
   const handleDepositFunc = async () => {
-    if(isLoading){
+    if (isLoading) {
       toast.warning("Deposit in progress...");
       return;
     }
 
-    if(cycleCount %30 !== 0){
-      toast.error("You can't deposit more than once every 30 days.");
+    if (cycleCount % (30 + (cycleCount - 1) * 10) !== 0) {
+      toast.error(
+        `You can't deposit more than once every ${
+          30 + (cycleCount - 1) * 10
+        } days.`
+      );
       return;
     }
 
+    setIsLoading(true);
+
     // CHECK POX BALANCE IN USER WALLET
     const userBalance = await window.pox.getDetails();
-    const poxBalance = userBalance[1]?.data?.Balance
-    if((poxBalance/Math.pow(10,6))<100){
+    const poxBalance = userBalance[1]?.data?.Balance;
+    if (poxBalance / Math.pow(10, 6) < 100) {
       toast.error("Insufficient POX balance.");
+      setIsLoading(false);
       return;
     }
 
     try {
-      setIsLoading(true);
-    const depositApiData = await depositFundApi(
-      100,
-      stateData?.referredBy,
-      stateData?.walletAddress
-    );
-    console.log("depositdata", depositApiData?.data?.transaction);
+      const depositApiData = await depositFundApi(
+        100,
+        stateData?.referredBy,
+        stateData?.walletAddress
+      );
+      console.log("depositdata", depositApiData?.data?.transaction);
 
-    const signedTransaction2 = await window.pox.signdata(
-      depositApiData?.data?.transaction
-    );
+      const signedTransaction2 = await window.pox.signdata(
+        depositApiData?.data?.transaction
+      );
 
-    console.log("signedTransaction: ", signedTransaction2);
+      console.log("signedTransaction: ", signedTransaction2);
 
-    const broadcast2 = JSON.stringify(
-      await window.pox.broadcast(JSON.parse(signedTransaction2[1]))
-    );
+      const broadcast2 = await window.pox.broadcast(
+        JSON.parse(signedTransaction2[1])
+      );
+      if (broadcast2[2] !== "Broadcast Successfully Done") {
+        setIsLoading(false);
+        toast.error("Failed to broadcast the transaction.");
+        return;
+      }
 
-    console.log("broadcast", broadcast2);
-    await fetchData();
-    toast.success("Deposited successfully.");
-  } catch (error) {
-    toast.error("Something went wrong")
-  } finally{
+      console.log("broadcast", broadcast2);
+      await fetchData();
+      setGlobalLoading(!globalLoading);
+      toast.success("Deposited successfully.");
+    } catch (error) {
+      toast.error("Something went wrong");
+    } finally {
       setIsLoading(false);
     }
   };
 
+  // WITHDRAW FUNCTION
   const handleWithDrawFunc = async () => {
-    if (availableAmount == null ||availableAmount <= 0) {
+    if (availableAmount == null || availableAmount <= 0) {
       toast.error("Insufficient funds.");
       return;
     }
 
-    if(isLoading){
+    if (!isDeposit) {
+      toast.error("First, make a new deposit.");
+      return;
+    }
+
+    // direct referral checking
+    if (preCycleCount === 1 && directReferralCount < 0) {
+      toast.error("You shoudl have 1 direct referral");
+      return;
+    } else if (preCycleCount === 2 && directReferralCount < 2) {
+      toast.error("You shoudl have 2 direct referral");
+      return;
+    } else if (preCycleCount === 3 && directReferralCount < 3) {
+      toast.error("You shoudl have 3 direct referral");
+      return;
+    } else if (preCycleCount === 4 && directReferralCount < 4) {
+      toast.error("You shoudl have 4 direct referral");
+      return;
+    } else if (preCycleCount === 5 && directReferralCount < 5) {
+      toast.error("You shoudl have 5 direct referral");
+      return;
+    }
+
+    if (withdrawLoading) {
       toast.warning("Withdrawal in progress...");
+      setWithdrawLoading(false);
       return;
     }
 
-    if(cycleCount !== 30){
-      toast.error("You can withdraw only when the cycle count is 30");
-      return;
+    try {
+      setWithdrawLoading(true);
+      const withDrawApiData = await withdrawFundApi(stateData?.walletAddress);
+      console.log(withDrawApiData);
+      const signedTransaction = await window.pox.signdata(
+        withDrawApiData?.data?.transaction
+      );
+
+      console.log("signedTransaction: ", signedTransaction);
+
+      const broadcast = await window.pox.broadcast(
+        JSON.parse(signedTransaction[1])
+      );
+
+      if (broadcast[2] !== "Broadcast Successfully Done") {
+        setWithdrawLoading(false);
+        toast.error("Failed to broadcast the transaction.");
+        return;
+      }
+
+      console.log("broadcast", broadcast);
+      await fetchData();
+      setGlobalLoading(!globalLoading);
+      toast.success("Withdrawn successfully.");
+    } catch (error) {
+      toast.error("Something went wrong");
+    } finally {
+      setWithdrawLoading(false);
     }
-
- try {
-  setIsLoading(true);
-  const withDrawApiData = await withdrawFundApi(stateData?.walletAddress);
-  console.log(withDrawApiData);
-  const signedTransaction = await window.pox.signdata(
-    withDrawApiData?.data?.transaction
-  );
-
-  console.log("signedTransaction: ", signedTransaction);
-
-  const broadcast = JSON.stringify(
-    await window.pox.broadcast(JSON.parse(signedTransaction[1]))
-  );
-
-  console.log("broadcast", broadcast);
-  await fetchData();
-  toast.success("Withdrawn successfully.");
- } catch (error) {
-  toast.error("Something went wrong")
- } finally {
-  setIsLoading(false);
- }
   };
 
   return (
@@ -166,7 +223,7 @@ const DepositAndWithdraw = () => {
               className="mt-8 w-full bg-[linear-gradient(to_right,#FFE27A,#FFBA57,#98DB7C,#8BCAFF)] text-black font-bold text-lg py-3 rounded-lg 
               shadow-lg hover:shadow-xl hover:scale-105 transition-transform duration-300 ease-in-out"
             >
-              Deposit
+              {isLoading ? <Loader /> : "Deposit"}
             </button>
           </div>
         </div>
@@ -213,7 +270,7 @@ const DepositAndWithdraw = () => {
               onClick={handleWithDrawFunc}
               className="mt-8 w-full bg-[linear-gradient(to_right,#FFE27A,#FFBA57,#98DB7C,#8BCAFF)] text-black font-bold text-lg py-3 rounded-lg shadow-lg hover:shadow-xl hover:scale-105 transition-transform duration-300 ease-in-out"
             >
-              Withdraw
+              {withdrawLoading ? <Loader /> : "Withdraw"}
             </button>
           </div>
         </div>
