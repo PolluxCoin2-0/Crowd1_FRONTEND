@@ -3,45 +3,32 @@ import LogoImage from "../assets/Logo.png";
 import { useDispatch, useSelector } from "react-redux";
 import { toast } from "react-toastify";
 import { setDataObject } from "../redux/slice";
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import { getDataOfDirectReferral } from "../utils/api/apiFunctions";
 
 const ReferralEarning = () => {
   const dispatch = useDispatch();
   const stateData = useSelector((state) => state?.wallet?.dataObject);
+  const [expandedLevel, setExpandedLevel] = useState(null);
+  const [referralData, setReferralData] = useState(null);
 
   useEffect(() => {
     const fetchData = async () => {
       const data = await getDataOfDirectReferral(stateData?.token);
       console.log("direct referral", data?.data);
+      setReferralData(data?.data);
     };
     fetchData();
-  }, []);
-
-  const dummyData = [
-    {
-      level: "1",
-      totalWallets: "50",
-      totalInvestments: "$10,000",
-      totalEarnings: "$1,500",
-    },
-    {
-      level: "2",
-      totalWallets: "30",
-      totalInvestments: "$6,000",
-      totalEarnings: "$900",
-    },
-    {
-      level: "3",
-      totalWallets: "20",
-      totalInvestments: "$4,000",
-      totalEarnings: "$600",
-    },
-  ];
+  }, [stateData?.token]);
 
   const handleSignOut = () => {
     dispatch(setDataObject()); // Clear wallet data using dispatch
     toast.success("Signed out successfully");
+  };
+
+  const handleToggle = (level) => {
+    // Toggle the selected level and close others
+    setExpandedLevel((prev) => (prev === level ? null : level));
   };
 
   return (
@@ -82,27 +69,160 @@ const ReferralEarning = () => {
           <thead>
             <tr className="text-left text-sm uppercase border-b border-gray-700">
               <th className="py-4 px-6">Level</th>
-              <th className="py-4 px-6 text-center">Total Wallets</th>
-              <th className="py-4 px-6 text-center">Total Investments</th>
-              <th className="py-4 px-6 text-right">Total Earnings</th>
+            
+              <th className="py-4 px-6 text-right">Total Count</th>
             </tr>
           </thead>
           <tbody>
-            {dummyData.map((data, index) => (
-              <tr
-                key={index}
-                className={`border-b border-gray-700 hover:bg-gray-800 transition-all ${
-                  index === dummyData.length - 1 ? "last:border-0" : ""
-                }`}
-              >
-                <td className="py-4 px-6">{data.level}</td>
-                <td className="py-4 px-6 text-center">{data.totalWallets}</td>
-                <td className="py-4 px-6 text-center">
-                  {data.totalInvestments}
-                </td>
-                <td className="py-4 px-6 text-right">{data.totalEarnings}</td>
-              </tr>
-            ))}
+            {referralData && (
+              <>
+                <tr
+                  onClick={() => handleToggle(1)}
+                  className="cursor-pointer border-b border-gray-700 hover:bg-gray-800 transition-all"
+                >
+                  <td className="py-4 px-6">1</td>
+                  <td className="py-4 px-6 text-right">{referralData?.leve1Count}</td>
+                </tr>
+                {expandedLevel === 1 && (
+                  <tr>
+                    <td colSpan="2">
+                      <div className="bg-gray-800 p-4 shadow-md">
+                        {referralData?.leve1Referrals?.length > 0 ? (
+                          referralData.leve1Referrals.map((ref, index) => (
+                            <div
+                              key={index}
+                              className="flex flex-col md:flex-row items-start md:justify-between md:items-center py-2 border-b border-gray-700 last:border-0"
+                            >
+                              <span>{ref.walletAddress}</span>
+                              <span>{new Date(ref.createdAt).toLocaleString()}</span>
+                            </div>
+                          ))
+                        ) : (
+                          <p className="text-center text-gray-500">No referrals</p>
+                        )}
+                      </div>
+                    </td>
+                  </tr>
+                )}
+
+                <tr
+                  onClick={() => handleToggle(2)}
+                  className="cursor-pointer border-b border-gray-700 hover:bg-gray-800 transition-all"
+                >
+                  <td className="py-4 px-6">2</td>
+                  <td className="py-4 px-6 text-right">{referralData.leve2Count}</td>
+                </tr>
+                {expandedLevel === 2 && (
+                  <tr>
+                    <td colSpan="2">
+                      <div className="bg-gray-800 p-4 shadow-md">
+                        {referralData?.leve2Referrals?.length > 0 ? (
+                          referralData.leve2Referrals.map((ref, index) => (
+                            <div
+                              key={index}
+                              className="flex flex-col md:flex-row items-start md:justify-between md:items-center py-2 border-b border-gray-700 last:border-0"
+                            >
+                              <span>{ref.walletAddress}</span>
+                              <span>{new Date(ref.createdAt).toLocaleString()}</span>
+                            </div>
+                          ))
+                        ) : (
+                          <p className="text-center text-gray-500">No referrals</p>
+                        )}
+                      </div>
+                    </td>
+                  </tr>
+                )}
+
+                <tr
+                  onClick={() => handleToggle(3)}
+                  className="cursor-pointer border-b border-gray-700 hover:bg-gray-800 transition-all"
+                >
+                  <td className="py-4 px-6">3</td>
+                  <td className="py-4 px-6 text-right">{referralData.leve3Count}</td>
+                </tr>
+                {expandedLevel === 3 && (
+                  <tr>
+                    <td colSpan="2">
+                      <div className="bg-gray-800 p-4 shadow-md">
+                        {referralData?.leve3Referrals?.length > 0 ? (
+                          referralData.leve3Referrals.map((ref, index) => (
+                            <div
+                              key={index}
+                              className="flex flex-col md:flex-row items-start md:justify-between md:items-center py-2 border-b border-gray-700 last:border-0"
+                            >
+                              <span>{ref.walletAddress}</span>
+                              <span>{new Date(ref.createdAt).toLocaleString()}</span>
+                            </div>
+                          ))
+                        ) : (
+                          <p className="text-center text-gray-500">No referrals</p>
+                        )}
+                      </div>
+                    </td>
+                  </tr>
+                )}
+
+<tr
+                  onClick={() => handleToggle(4)}
+                  className="cursor-pointer border-b border-gray-700 hover:bg-gray-800 transition-all"
+                >
+                  <td className="py-4 px-6">4</td>
+                  <td className="py-4 px-6 text-right">{referralData?.leve4Count}</td>
+                </tr>
+
+{expandedLevel === 4 && (
+                  <tr>
+                    <td colSpan="2">
+                      <div className="bg-gray-800 p-4 shadow-md">
+                        {referralData?.leve4Referrals?.length > 0 ? (
+                          referralData.leve4Referrals.map((ref, index) => (
+                            <div
+                              key={index}
+                              className="flex flex-col md:flex-row items-start md:justify-between md:items-center py-2 border-b border-gray-700 last:border-0"
+                            >
+                              <span>{ref.walletAddress}</span>
+                              <span>{new Date(ref.createdAt).toLocaleString()}</span>
+                            </div>
+                          ))
+                        ) : (
+                          <p className="text-center text-gray-500">No referrals</p>
+                        )}
+                      </div>
+                    </td>
+                  </tr>
+                )}
+
+                  <tr
+                  onClick={() => handleToggle(5)}
+                  className="cursor-pointer border-b border-gray-700 hover:bg-gray-800 transition-all"
+                >
+                  <td className="py-4 px-6">5</td>
+                  <td className="py-4 px-6 text-right">{referralData?.leve5Count}</td>
+                </tr>
+{expandedLevel === 5 && (
+                  <tr>
+                    <td colSpan="2">
+                      <div className="bg-gray-800 p-4 shadow-md">
+                        {referralData?.leve5Referrals?.length > 0 ? (
+                          referralData.leve5Referrals.map((ref, index) => (
+                            <div
+                              key={index}
+                              className="flex flex-col md:flex-row items-start md:justify-between md:items-center py-2 border-b border-gray-700 last:border-0"
+                            >
+                              <span>{ref.walletAddress}</span>
+                              <span>{new Date(ref.createdAt).toLocaleString()}</span>
+                            </div>
+                          ))
+                        ) : (
+                          <p className="text-center text-gray-500">No referrals</p>
+                        )}
+                      </div>
+                    </td>
+                  </tr>
+                )}
+              </>
+            )}
           </tbody>
         </table>
       </div>

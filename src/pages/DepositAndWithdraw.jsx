@@ -3,6 +3,7 @@ import POX from "../assets/PoxImg.png";
 import { useEffect, useState } from "react";
 import {
   depositFundApi,
+  getDataOfDirectReferral,
   totalReferralReturnsApi,
   userDetailsApi,
   withdrawFundApi,
@@ -14,11 +15,13 @@ const DepositAndWithdraw = ({ globalLoading, setGlobalLoading }) => {
   const stateData = useSelector((state) => state?.wallet?.dataObject);
   const [userTotallROIReturn, setUserTotallROIReturn] = useState(0);
   const [cycleCount, setCycleCount] = useState(0);
+  const [preCycleCount, setPreCycleCount] = useState(0);
   const [mintCount, setMintCount] = useState(0);
   const [availableAmount, setAvailableAmount] = useState(0);
   const [isLoading, setIsLoading] = useState(false);
   const [withdrawLoading, setWithdrawLoading] = useState(false);
   const [isDeposit, setIsDeposit] = useState(false);
+  const [directReferralCount, setDirectReferralCount] = useState(0);
 
   const fetchData = async () => {
    const referralAmount = await totalReferralReturnsApi(stateData?.walletAddress);
@@ -30,16 +33,20 @@ const DepositAndWithdraw = ({ globalLoading, setGlobalLoading }) => {
     setCycleCount(userData?.data?.cycleCount);
     setMintCount(userData?.data?.mintCount);
     setAvailableAmount(userData?.data?.depositAmount);
-    setIsDeposit(userData?.data?.hasNewDeposit)
-    setGlobalLoading(!globalLoading);
+    setIsDeposit(userData?.data?.hasNewDeposit);
+    setPreCycleCount(userData?.data?.preCycleCount);
+    const directReferralData = await getDataOfDirectReferral(stateData?.token);
+    setDirectReferralCount(directReferralData?.data?.leve1Count)
   };
 
   useEffect(() => {
     if (stateData?.walletAddress) {
       fetchData();
     }
-  }, [stateData?.walletAddress, isLoading,]);
+  }, [stateData?.walletAddress, isLoading, globalLoading]);
 
+
+  // DEPOSIT FUNCTION
   const handleDepositFunc = async () => {
     if (isLoading) {
       toast.warning("Deposit in progress...");
@@ -87,6 +94,7 @@ const DepositAndWithdraw = ({ globalLoading, setGlobalLoading }) => {
 
       console.log("broadcast", broadcast2);
       await fetchData();
+    setGlobalLoading(!globalLoading);
       toast.success("Deposited successfully.");
     } catch (error) {
       toast.error("Something went wrong");
@@ -95,6 +103,7 @@ const DepositAndWithdraw = ({ globalLoading, setGlobalLoading }) => {
     }
   };
 
+  // WITHDRAW FUNCTION
   const handleWithDrawFunc = async () => {
     if (availableAmount == null || availableAmount <= 0) {
       toast.error("Insufficient funds.");
@@ -107,6 +116,22 @@ const DepositAndWithdraw = ({ globalLoading, setGlobalLoading }) => {
     }
 
     // direct referral checking
+    if(preCycleCount === 1 && directReferralCount<0){
+      toast.error("You shoudl have 1 direct referral");
+      return;
+    } else if(preCycleCount === 2 && directReferralCount<2){
+      toast.error("You shoudl have 2 direct referral");
+      return;
+    } else if (preCycleCount === 3 && directReferralCount<3){
+      toast.error("You shoudl have 3 direct referral");
+      return;
+    }  else if (preCycleCount === 4 && directReferralCount<4){
+      toast.error("You shoudl have 4 direct referral");
+      return;
+    }  else if (preCycleCount === 5 && directReferralCount<5){
+      toast.error("You shoudl have 5 direct referral");
+      return;
+    }
 
     if (withdrawLoading) {
       toast.warning("Withdrawal in progress...");
@@ -136,6 +161,7 @@ const DepositAndWithdraw = ({ globalLoading, setGlobalLoading }) => {
 
       console.log("broadcast", broadcast);
       await fetchData();
+    setGlobalLoading(!globalLoading);
       toast.success("Withdrawn successfully.");
     } catch (error) {
       toast.error("Something went wrong");

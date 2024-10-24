@@ -24,14 +24,13 @@ const MintTable = ({ globalLoading, setGlobalLoading }) => {
     const userDataFromDB = await getDataFromDBApi(stateData?.token);
     setPreviousDataArray(userDataFromDB?.data);
     console.log("userDataFromDB", userDataFromDB?.data);
-    setGlobalLoading(!globalLoading);
   };
 
   useEffect(() => {
     if (stateData?.walletAddress) {
       fetchData();
     }
-  }, [isLoading,]);
+  }, [isLoading, globalLoading]);
 
   const getFormattedDate = () => {
     const now = new Date();
@@ -120,7 +119,7 @@ const MintTable = ({ globalLoading, setGlobalLoading }) => {
             userDataApi?.cycleCount,
             userDataApi?.depositAmount,
             30,
-            userDataApi?.totalReward + 1,
+            userDataApi?.totalReward,
             time,
             mintThreshold,
             stateData?.token
@@ -133,6 +132,7 @@ const MintTable = ({ globalLoading, setGlobalLoading }) => {
         }
       }
       await fetchData();
+    setGlobalLoading(!globalLoading);
       toast.success("Minted successfully.");
     } catch (error) {
       toast.error("Something went wrong");
@@ -204,7 +204,7 @@ const MintTable = ({ globalLoading, setGlobalLoading }) => {
               })}
           </tbody>
           {
-            userDataApi?.cycleCount && (userDataApi?.cycleCount !== previousDataArray[previousDataArray?.length-1]?.cycleNo) && (
+            userDataApi?.cycleCount && (userDataApi?.cycleCount !== previousDataArray[previousDataArray?.length-1]?.cycleNo) ? (
               <>
                      <tbody>
             <tr className="border-none hover:bg-[#2C2C2E] transition-all bg-transparent">
@@ -248,6 +248,13 @@ const MintTable = ({ globalLoading, setGlobalLoading }) => {
             </tr>
           </tbody>  
               </>
+            ) :
+            ( previousDataArray.length>0 ?  <p className="text-center font-medium py-2">Start a new cycle with your next deposit!</p> :(
+              <>
+              <p className="text-center font-medium py-2">No Data Found!</p>
+              </>
+            )
+             
             )
           }
    
