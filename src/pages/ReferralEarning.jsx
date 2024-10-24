@@ -81,7 +81,7 @@ const ReferralEarning = () => {
                   className="cursor-pointer border-b border-gray-700 hover:bg-gray-800 transition-all"
                 >
                   <td className="py-4 px-6">1</td>
-                  <td className="py-4 px-6 text-right">{referralData?.leve1Count}</td>
+                  <td className="py-4 px-6 text-right">{referralData?.leve1Count ? referralData?.leve1Count :0}</td>
                 </tr>
                 {expandedLevel === 1 && (
                   <tr>
@@ -110,7 +110,7 @@ const ReferralEarning = () => {
                   className="cursor-pointer border-b border-gray-700 hover:bg-gray-800 transition-all"
                 >
                   <td className="py-4 px-6">2</td>
-                  <td className="py-4 px-6 text-right">{referralData.leve2Count}</td>
+                  <td className="py-4 px-6 text-right">{referralData?.leve2Count ? referralData?.leve2Count : 0}</td>
                 </tr>
                 {expandedLevel === 2 && (
                   <tr>
@@ -139,7 +139,7 @@ const ReferralEarning = () => {
                   className="cursor-pointer border-b border-gray-700 hover:bg-gray-800 transition-all"
                 >
                   <td className="py-4 px-6">3</td>
-                  <td className="py-4 px-6 text-right">{referralData.leve3Count}</td>
+                  <td className="py-4 px-6 text-right">{referralData?.leve3Count ? referralData?.leve3Count : 0}</td>
                 </tr>
                 {expandedLevel === 3 && (
                   <tr>
@@ -168,7 +168,7 @@ const ReferralEarning = () => {
                   className="cursor-pointer border-b border-gray-700 hover:bg-gray-800 transition-all"
                 >
                   <td className="py-4 px-6">4</td>
-                  <td className="py-4 px-6 text-right">{referralData?.leve4Count}</td>
+                  <td className="py-4 px-6 text-right">{referralData?.leve4Count ? referralData?.leve4Count : 0}</td>
                 </tr>
 
 {expandedLevel === 4 && (
@@ -198,7 +198,7 @@ const ReferralEarning = () => {
                   className="cursor-pointer border-b border-gray-700 hover:bg-gray-800 transition-all"
                 >
                   <td className="py-4 px-6">5</td>
-                  <td className="py-4 px-6 text-right">{referralData?.leve5Count}</td>
+                  <td className="py-4 px-6 text-right">{referralData?.leve5Count ? referralData?.leve5Count : 0}</td>
                 </tr>
 {expandedLevel === 5 && (
                   <tr>
