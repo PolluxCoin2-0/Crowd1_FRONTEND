@@ -53,10 +53,10 @@ const DepositAndWithdraw = ({ globalLoading, setGlobalLoading }) => {
       return;
     }
 
-    // if(cycleCount % (30 + (cycleCount - 1) * 10) !== 0){
-    //   toast.error(`You can't deposit more than once every ${(30 + (cycleCount - 1) * 10)} days.`);
-    //   return;
-    // }
+    if(cycleCount % (30 + (cycleCount - 1) * 10) !== 0){
+      toast.error(`You can't deposit more than once every ${(30 + (cycleCount - 1) * 10)} days.`);
+      return;
+    }
 
     setIsLoading(true);
 
