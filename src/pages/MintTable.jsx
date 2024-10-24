@@ -64,7 +64,8 @@ const MintTable = ({ globalLoading, setGlobalLoading }) => {
     try {
       setIsLoading(true);
       const lastMintTime = await getUserMintedTimeApi(stateData?.token);
-      const currentDate = new Date().toISOString().split("T")[0]; // Get current date in 'YYYY-MM-DD' format
+      console.log("time", lastMintTime?.data);
+      const currentTime = new Date(); // Get current time
 
       // Check if lastMintTime?.data is a valid date
       const isValidDate = (date) => {
@@ -74,14 +75,19 @@ const MintTable = ({ globalLoading, setGlobalLoading }) => {
       let lastMintDate = null;
 
       if (lastMintTime?.data && isValidDate(lastMintTime.data)) {
-        lastMintDate = new Date(lastMintTime.data).toISOString().split("T")[0]; // Convert last mint date to 'YYYY-MM-DD'
+        lastMintDate = new Date(lastMintTime.data); // Convert last mint date to 'YYYY-MM-DD'
       }
 
-      // if (lastMintDate && currentDate === lastMintDate) {
-      //   toast.error("You can't mint more than once per day.");
-      //   return;
-      // }
+      // Check if 24 hours have passed since lastMintTime
+      if (lastMintDate) {
+        const timeDifference = currentTime - lastMintDate; // Difference in milliseconds
+        const hoursDifference = timeDifference / (1000 * 60 * 60); // Convert difference to hours
 
+        if (hoursDifference < 24) {
+          toast.error("You can't mint more than once per 24 hours.");
+          return;
+        }
+      }
       const mintApiData = await mintApi(stateData?.walletAddress);
       console.log(mintApiData);
 
@@ -124,15 +130,15 @@ const MintTable = ({ globalLoading, setGlobalLoading }) => {
             mintThreshold,
             stateData?.token
           );
-          toast.success("save to DB success");
+          // toast.success("save to DB success");
           console.log("savedData: ", saveDataToDB);
         } catch (error) {
           console.log(error);
-          toast.error("Error saving to DB.");
+          toast.error("Something went wrong");
         }
       }
       await fetchData();
-    setGlobalLoading(!globalLoading);
+      setGlobalLoading(!globalLoading);
       toast.success("Minted successfully.");
     } catch (error) {
       toast.error("Something went wrong");
@@ -203,61 +209,63 @@ const MintTable = ({ globalLoading, setGlobalLoading }) => {
                 );
               })}
           </tbody>
-          {
-            userDataApi?.cycleCount && (userDataApi?.cycleCount !== previousDataArray[previousDataArray?.length-1]?.cycleNo) ? (
-              <>
-                     <tbody>
-            <tr className="border-none hover:bg-[#2C2C2E] transition-all bg-transparent">
-              <td className="py-4 px-6">
-                {userDataApi?.cycleCount ? userDataApi?.cycleCount : 0}
-              </td>
-              <td className="py-4 px-6 text-center">
-                {userDataApi?.depositAmount ? userDataApi?.depositAmount : 0}
-              </td>
-              <td className="py-4 px-6 text-center">
-                {userDataApi?.depositAmount
-                  ? (userDataApi.depositAmount * 0.3).toFixed(2)
-                  : 0}
-              </td>
-              <td className="py-4 px-6 text-center">
-                {userDataApi?.totalReward ? userDataApi?.totalReward : 0}
-              </td>
-              <td className="py-4 px-6 text-center">
-                {userDataApi?.startTime
-                  ? new Date(userDataApi.startTime * 1000).toLocaleDateString(
-                      "en-GB"
-                    )
-                  : 0}
-              </td>
-              <td className="py-4 px-6 text-center">
-                {" "}
-                {userDataApi?.mintCount
-                  ? `${userDataApi.mintCount}/${
-                      30 + (userDataApi?.cycleCount - 1) * 10
-                    }`
-                  : 0}
-              </td>
-              <td className="py-4 px-6 text-right">
-                <button
-                  onClick={handldeMintFunc}
-                  className="bg-[linear-gradient(to_right,#FFE27A,#FFBA57,#98DB7C,#8BCAFF)] text-black font-bold py-2 px-10 rounded-lg shadow-lg hover:shadow-xl hover:scale-105 transition-transform duration-300"
-                >
-                  {isLoading ? <Loader /> : " Mint"}
-                </button>
-              </td>
-            </tr>
-          </tbody>  
-              </>
-            ) :
-            ( previousDataArray.length>0 ?  <p className="text-center font-medium py-2">Start a new cycle with your next deposit!</p> :(
-              <>
+          {userDataApi?.cycleCount &&
+          userDataApi?.cycleCount !==
+            previousDataArray[previousDataArray?.length - 1]?.cycleNo ? (
+            <>
+              <tbody>
+                <tr className="border-none hover:bg-[#2C2C2E] transition-all bg-transparent">
+                  <td className="py-4 px-6">
+                    {userDataApi?.cycleCount ? userDataApi?.cycleCount : 0}
+                  </td>
+                  <td className="py-4 px-6 text-center">
+                    {userDataApi?.depositAmount
+                      ? userDataApi?.depositAmount
+                      : 0}
+                  </td>
+                  <td className="py-4 px-6 text-center">
+                    {userDataApi?.depositAmount
+                      ? (userDataApi.depositAmount * 0.3).toFixed(2)
+                      : 0}
+                  </td>
+                  <td className="py-4 px-6 text-center">
+                    {userDataApi?.totalReward ? userDataApi?.totalReward : 0}
+                  </td>
+                  <td className="py-4 px-6 text-center">
+                    {userDataApi?.startTime
+                      ? new Date(
+                          userDataApi.startTime * 1000
+                        ).toLocaleDateString("en-GB")
+                      : 0}
+                  </td>
+                  <td className="py-4 px-6 text-center">
+                    {" "}
+                    {userDataApi?.mintCount
+                      ? `${userDataApi.mintCount}/${
+                          30 + (userDataApi?.cycleCount - 1) * 10
+                        }`
+                      : 0}
+                  </td>
+                  <td className="py-4 px-6 text-right">
+                    <button
+                      onClick={handldeMintFunc}
+                      className="bg-[linear-gradient(to_right,#FFE27A,#FFBA57,#98DB7C,#8BCAFF)] text-black font-bold py-2 px-10 rounded-lg shadow-lg hover:shadow-xl hover:scale-105 transition-transform duration-300"
+                    >
+                      {isLoading ? <Loader /> : " Mint"}
+                    </button>
+                  </td>
+                </tr>
+              </tbody>
+            </>
+          ) : previousDataArray.length > 0 ? (
+            <p className="text-center font-medium py-2">
+              Start a new cycle with your next deposit!
+            </p>
+          ) : (
+            <>
               <p className="text-center font-medium py-2">No Data Found!</p>
-              </>
-            )
-             
-            )
-          }
-   
+            </>
+          )}
         </table>
       </div>
     </div>

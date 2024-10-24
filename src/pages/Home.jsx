@@ -20,7 +20,7 @@ const Home = () => {
   useEffect(()=>{},[globalLoading])
   // Function to copy text
   const handleRegisterCopy = (copiedText) => {
-    navigator.clipboard.writeText(`https://crowd1dev.netlify.app/referral/${copiedText}`);
+    navigator.clipboard.writeText(`https://crowd1.club/referral/${copiedText}`);
     toast.success("Referral Link Copied");
   };
 

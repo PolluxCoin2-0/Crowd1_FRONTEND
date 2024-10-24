@@ -24,11 +24,15 @@ const DepositAndWithdraw = ({ globalLoading, setGlobalLoading }) => {
   const [directReferralCount, setDirectReferralCount] = useState(0);
 
   const fetchData = async () => {
-   const referralAmount = await totalReferralReturnsApi(stateData?.walletAddress);
+    const referralAmount = await totalReferralReturnsApi(
+      stateData?.walletAddress
+    );
     const userData = await userDetailsApi(stateData?.walletAddress);
     console.log({ userData });
     setUserTotallROIReturn(
-      userData?.data?.previousDepositAmount + userData?.data?.previousReward + referralAmount?.data
+      userData?.data?.previousDepositAmount +
+        userData?.data?.previousReward +
+        referralAmount?.data
     );
     setCycleCount(userData?.data?.cycleCount);
     setMintCount(userData?.data?.mintCount);
@@ -36,7 +40,7 @@ const DepositAndWithdraw = ({ globalLoading, setGlobalLoading }) => {
     setIsDeposit(userData?.data?.hasNewDeposit);
     setPreCycleCount(userData?.data?.preCycleCount);
     const directReferralData = await getDataOfDirectReferral(stateData?.token);
-    setDirectReferralCount(directReferralData?.data?.leve1Count)
+    setDirectReferralCount(directReferralData?.data?.leve1Count);
   };
 
   useEffect(() => {
@@ -45,7 +49,6 @@ const DepositAndWithdraw = ({ globalLoading, setGlobalLoading }) => {
     }
   }, [stateData?.walletAddress, isLoading, globalLoading]);
 
-
   // DEPOSIT FUNCTION
   const handleDepositFunc = async () => {
     if (isLoading) {
@@ -53,10 +56,14 @@ const DepositAndWithdraw = ({ globalLoading, setGlobalLoading }) => {
       return;
     }
 
-    // if(cycleCount % (30 + (cycleCount - 1) * 10) !== 0){
-    //   toast.error(`You can't deposit more than once every ${(30 + (cycleCount - 1) * 10)} days.`);
-    //   return;
-    // }
+    if (cycleCount % (30 + (cycleCount - 1) * 10) !== 0) {
+      toast.error(
+        `You can't deposit more than once every ${
+          30 + (cycleCount - 1) * 10
+        } days.`
+      );
+      return;
+    }
 
     setIsLoading(true);
 
@@ -94,7 +101,7 @@ const DepositAndWithdraw = ({ globalLoading, setGlobalLoading }) => {
 
       console.log("broadcast", broadcast2);
       await fetchData();
-    setGlobalLoading(!globalLoading);
+      setGlobalLoading(!globalLoading);
       toast.success("Deposited successfully.");
     } catch (error) {
       toast.error("Something went wrong");
@@ -110,25 +117,25 @@ const DepositAndWithdraw = ({ globalLoading, setGlobalLoading }) => {
       return;
     }
 
-    if(!isDeposit){
+    if (!isDeposit) {
       toast.error("First, make a new deposit.");
       return;
     }
 
     // direct referral checking
-    if(preCycleCount === 1 && directReferralCount<0){
+    if (preCycleCount === 1 && directReferralCount < 0) {
       toast.error("You shoudl have 1 direct referral");
       return;
-    } else if(preCycleCount === 2 && directReferralCount<2){
+    } else if (preCycleCount === 2 && directReferralCount < 2) {
       toast.error("You shoudl have 2 direct referral");
       return;
-    } else if (preCycleCount === 3 && directReferralCount<3){
+    } else if (preCycleCount === 3 && directReferralCount < 3) {
       toast.error("You shoudl have 3 direct referral");
       return;
-    }  else if (preCycleCount === 4 && directReferralCount<4){
+    } else if (preCycleCount === 4 && directReferralCount < 4) {
       toast.error("You shoudl have 4 direct referral");
       return;
-    }  else if (preCycleCount === 5 && directReferralCount<5){
+    } else if (preCycleCount === 5 && directReferralCount < 5) {
       toast.error("You shoudl have 5 direct referral");
       return;
     }
@@ -161,7 +168,7 @@ const DepositAndWithdraw = ({ globalLoading, setGlobalLoading }) => {
 
       console.log("broadcast", broadcast);
       await fetchData();
-    setGlobalLoading(!globalLoading);
+      setGlobalLoading(!globalLoading);
       toast.success("Withdrawn successfully.");
     } catch (error) {
       toast.error("Something went wrong");

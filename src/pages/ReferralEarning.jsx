@@ -69,7 +69,7 @@ const ReferralEarning = () => {
           <thead>
             <tr className="text-left text-sm uppercase border-b border-gray-700">
               <th className="py-4 px-6">Level</th>
-            
+
               <th className="py-4 px-6 text-right">Total Count</th>
             </tr>
           </thead>
@@ -81,7 +81,9 @@ const ReferralEarning = () => {
                   className="cursor-pointer border-b border-gray-700 hover:bg-gray-800 transition-all"
                 >
                   <td className="py-4 px-6">1</td>
-                  <td className="py-4 px-6 text-right">{referralData?.leve1Count ? referralData?.leve1Count :0}</td>
+                  <td className="py-4 px-6 text-right">
+                    {referralData?.leve1Count ? referralData?.leve1Count : 0}
+                  </td>
                 </tr>
                 {expandedLevel === 1 && (
                   <tr>
@@ -94,11 +96,15 @@ const ReferralEarning = () => {
                               className="flex flex-col md:flex-row items-start md:justify-between md:items-center py-2 border-b border-gray-700 last:border-0"
                             >
                               <span>{ref.walletAddress}</span>
-                              <span>{new Date(ref.createdAt).toLocaleString()}</span>
+                              <span>
+                                {new Date(ref.createdAt).toLocaleString()}
+                              </span>
                             </div>
                           ))
                         ) : (
-                          <p className="text-center text-gray-500">No referrals</p>
+                          <p className="text-center text-gray-500">
+                            No referrals
+                          </p>
                         )}
                       </div>
                     </td>
@@ -110,7 +116,9 @@ const ReferralEarning = () => {
                   className="cursor-pointer border-b border-gray-700 hover:bg-gray-800 transition-all"
                 >
                   <td className="py-4 px-6">2</td>
-                  <td className="py-4 px-6 text-right">{referralData?.leve2Count ? referralData?.leve2Count : 0}</td>
+                  <td className="py-4 px-6 text-right">
+                    {referralData?.leve2Count ? referralData?.leve2Count : 0}
+                  </td>
                 </tr>
                 {expandedLevel === 2 && (
                   <tr>
@@ -123,11 +131,15 @@ const ReferralEarning = () => {
                               className="flex flex-col md:flex-row items-start md:justify-between md:items-center py-2 border-b border-gray-700 last:border-0"
                             >
                               <span>{ref.walletAddress}</span>
-                              <span>{new Date(ref.createdAt).toLocaleString()}</span>
+                              <span>
+                                {new Date(ref.createdAt).toLocaleString()}
+                              </span>
                             </div>
                           ))
                         ) : (
-                          <p className="text-center text-gray-500">No referrals</p>
+                          <p className="text-center text-gray-500">
+                            No referrals
+                          </p>
                         )}
                       </div>
                     </td>
@@ -139,7 +151,9 @@ const ReferralEarning = () => {
                   className="cursor-pointer border-b border-gray-700 hover:bg-gray-800 transition-all"
                 >
                   <td className="py-4 px-6">3</td>
-                  <td className="py-4 px-6 text-right">{referralData?.leve3Count ? referralData?.leve3Count : 0}</td>
+                  <td className="py-4 px-6 text-right">
+                    {referralData?.leve3Count ? referralData?.leve3Count : 0}
+                  </td>
                 </tr>
                 {expandedLevel === 3 && (
                   <tr>
@@ -152,26 +166,32 @@ const ReferralEarning = () => {
                               className="flex flex-col md:flex-row items-start md:justify-between md:items-center py-2 border-b border-gray-700 last:border-0"
                             >
                               <span>{ref.walletAddress}</span>
-                              <span>{new Date(ref.createdAt).toLocaleString()}</span>
+                              <span>
+                                {new Date(ref.createdAt).toLocaleString()}
+                              </span>
                             </div>
                           ))
                         ) : (
-                          <p className="text-center text-gray-500">No referrals</p>
+                          <p className="text-center text-gray-500">
+                            No referrals
+                          </p>
                         )}
                       </div>
                     </td>
                   </tr>
                 )}
 
-<tr
+                <tr
                   onClick={() => handleToggle(4)}
                   className="cursor-pointer border-b border-gray-700 hover:bg-gray-800 transition-all"
                 >
                   <td className="py-4 px-6">4</td>
-                  <td className="py-4 px-6 text-right">{referralData?.leve4Count ? referralData?.leve4Count : 0}</td>
+                  <td className="py-4 px-6 text-right">
+                    {referralData?.leve4Count ? referralData?.leve4Count : 0}
+                  </td>
                 </tr>
 
-{expandedLevel === 4 && (
+                {expandedLevel === 4 && (
                   <tr>
                     <td colSpan="2">
                       <div className="bg-gray-800 p-4 shadow-md">
@@ -182,25 +202,31 @@ const ReferralEarning = () => {
                               className="flex flex-col md:flex-row items-start md:justify-between md:items-center py-2 border-b border-gray-700 last:border-0"
                             >
                               <span>{ref.walletAddress}</span>
-                              <span>{new Date(ref.createdAt).toLocaleString()}</span>
+                              <span>
+                                {new Date(ref.createdAt).toLocaleString()}
+                              </span>
                             </div>
                           ))
                         ) : (
-                          <p className="text-center text-gray-500">No referrals</p>
+                          <p className="text-center text-gray-500">
+                            No referrals
+                          </p>
                         )}
                       </div>
                     </td>
                   </tr>
                 )}
 
-                  <tr
+                <tr
                   onClick={() => handleToggle(5)}
                   className="cursor-pointer border-b border-gray-700 hover:bg-gray-800 transition-all"
                 >
                   <td className="py-4 px-6">5</td>
-                  <td className="py-4 px-6 text-right">{referralData?.leve5Count ? referralData?.leve5Count : 0}</td>
+                  <td className="py-4 px-6 text-right">
+                    {referralData?.leve5Count ? referralData?.leve5Count : 0}
+                  </td>
                 </tr>
-{expandedLevel === 5 && (
+                {expandedLevel === 5 && (
                   <tr>
                     <td colSpan="2">
                       <div className="bg-gray-800 p-4 shadow-md">
@@ -211,11 +237,15 @@ const ReferralEarning = () => {
                               className="flex flex-col md:flex-row items-start md:justify-between md:items-center py-2 border-b border-gray-700 last:border-0"
                             >
                               <span>{ref.walletAddress}</span>
-                              <span>{new Date(ref.createdAt).toLocaleString()}</span>
+                              <span>
+                                {new Date(ref.createdAt).toLocaleString()}
+                              </span>
                             </div>
                           ))
                         ) : (
-                          <p className="text-center text-gray-500">No referrals</p>
+                          <p className="text-center text-gray-500">
+                            No referrals
+                          </p>
                         )}
                       </div>
                     </td>
