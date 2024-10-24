@@ -119,7 +119,7 @@ const MintTable = ({ globalLoading, setGlobalLoading }) => {
             userDataApi?.cycleCount,
             userDataApi?.depositAmount,
             30,
-            userDataApi?.totalReward,
+            30,
             time,
             mintThreshold,
             stateData?.token
