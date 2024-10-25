@@ -15,7 +15,6 @@ const ReferralEarning = () => {
   useEffect(() => {
     const fetchData = async () => {
       const data = await getDataOfDirectReferral(stateData?.token);
-      console.log("direct referral", data?.data);
       setReferralData(data?.data);
     };
     fetchData();
@@ -82,15 +81,15 @@ const ReferralEarning = () => {
                 >
                   <td className="py-4 px-6">1</td>
                   <td className="py-4 px-6 text-right">
-                    {referralData?.leve1Count ? referralData?.leve1Count : 0}
+                    {referralData?.level1Count ? referralData?.level1Count : 0}
                   </td>
                 </tr>
                 {expandedLevel === 1 && (
                   <tr>
                     <td colSpan="2">
                       <div className="bg-gray-800 p-4 shadow-md">
-                        {referralData?.leve1Referrals?.length > 0 ? (
-                          referralData.leve1Referrals.map((ref, index) => (
+                        {referralData?.level1Referrals?.length > 0 ? (
+                          referralData.level1Referrals.map((ref, index) => (
                             <div
                               key={index}
                               className="flex flex-col md:flex-row items-start md:justify-between md:items-center py-2 border-b border-gray-700 last:border-0"
@@ -117,15 +116,15 @@ const ReferralEarning = () => {
                 >
                   <td className="py-4 px-6">2</td>
                   <td className="py-4 px-6 text-right">
-                    {referralData?.leve2Count ? referralData?.leve2Count : 0}
+                    {referralData?.level2Count ? referralData?.level2Count : 0}
                   </td>
                 </tr>
                 {expandedLevel === 2 && (
                   <tr>
                     <td colSpan="2">
                       <div className="bg-gray-800 p-4 shadow-md">
-                        {referralData?.leve2Referrals?.length > 0 ? (
-                          referralData.leve2Referrals.map((ref, index) => (
+                        {referralData?.level2Referrals?.length > 0 ? (
+                          referralData.level2Referrals.map((ref, index) => (
                             <div
                               key={index}
                               className="flex flex-col md:flex-row items-start md:justify-between md:items-center py-2 border-b border-gray-700 last:border-0"
@@ -152,15 +151,15 @@ const ReferralEarning = () => {
                 >
                   <td className="py-4 px-6">3</td>
                   <td className="py-4 px-6 text-right">
-                    {referralData?.leve3Count ? referralData?.leve3Count : 0}
+                    {referralData?.level3Count ? referralData?.level3Count : 0}
                   </td>
                 </tr>
                 {expandedLevel === 3 && (
                   <tr>
                     <td colSpan="2">
                       <div className="bg-gray-800 p-4 shadow-md">
-                        {referralData?.leve3Referrals?.length > 0 ? (
-                          referralData.leve3Referrals.map((ref, index) => (
+                        {referralData?.level3Referrals?.length > 0 ? (
+                          referralData.level3Referrals.map((ref, index) => (
                             <div
                               key={index}
                               className="flex flex-col md:flex-row items-start md:justify-between md:items-center py-2 border-b border-gray-700 last:border-0"
@@ -187,7 +186,7 @@ const ReferralEarning = () => {
                 >
                   <td className="py-4 px-6">4</td>
                   <td className="py-4 px-6 text-right">
-                    {referralData?.leve4Count ? referralData?.leve4Count : 0}
+                    {referralData?.level4Count ? referralData?.level4Count : 0}
                   </td>
                 </tr>
 
@@ -195,8 +194,8 @@ const ReferralEarning = () => {
                   <tr>
                     <td colSpan="2">
                       <div className="bg-gray-800 p-4 shadow-md">
-                        {referralData?.leve4Referrals?.length > 0 ? (
-                          referralData.leve4Referrals.map((ref, index) => (
+                        {referralData?.level4Referrals?.length > 0 ? (
+                          referralData.level4Referrals.map((ref, index) => (
                             <div
                               key={index}
                               className="flex flex-col md:flex-row items-start md:justify-between md:items-center py-2 border-b border-gray-700 last:border-0"
@@ -223,15 +222,15 @@ const ReferralEarning = () => {
                 >
                   <td className="py-4 px-6">5</td>
                   <td className="py-4 px-6 text-right">
-                    {referralData?.leve5Count ? referralData?.leve5Count : 0}
+                    {referralData?.level5Count ? referralData?.level5Count : 0}
                   </td>
                 </tr>
                 {expandedLevel === 5 && (
                   <tr>
                     <td colSpan="2">
                       <div className="bg-gray-800 p-4 shadow-md">
-                        {referralData?.leve5Referrals?.length > 0 ? (
-                          referralData.leve5Referrals.map((ref, index) => (
+                        {referralData?.level5Referrals?.length > 0 ? (
+                          referralData.level5Referrals.map((ref, index) => (
                             <div
                               key={index}
                               className="flex flex-col md:flex-row items-start md:justify-between md:items-center py-2 border-b border-gray-700 last:border-0"
