@@ -4,7 +4,7 @@ pipeline {
     stages {
         stage('Github Checkout') {
             steps { 
-          
+           
                 git branch: 'main', credentialsId: 'github-authentication', url: 'https://github.com/PolluxCoin2-0/Crowd1_FRONTEND.git'
             }
         }
