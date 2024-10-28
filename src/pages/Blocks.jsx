@@ -15,7 +15,6 @@ const Blocks = ({globalLoading}) => {
 
   useEffect(()=>{
     const fetchData = async()=>{
-      console.log("blocks data fetched")
      // User Crowd1 Balance
      const crowd1BalanceData = await userTotalReturnsApi(stateData?.walletAddress);
      setCrowd1Balance(crowd1BalanceData?.data);
@@ -52,7 +51,7 @@ const Blocks = ({globalLoading}) => {
             </div>
           
             <p className="text-[#8C8B8B] text-xs md:text-lg font-semibold mt-0 md:mt-3 text-nowrap">
-              Your crowd1 Balance
+              Crowd1 Balance
             </p>
           </div>
           <div className="bg-[#202020] rounded-full p-[8px]">
@@ -74,11 +73,11 @@ const Blocks = ({globalLoading}) => {
           <div className="flex flex-row items-center space-x-2">
           <img src={POX} alt="USDX" className="w-8 h-8" />
             <p className="text-md md:text-2xl lg:text-xl xl:text-4xl text-white font-bold pb-2 md:pb-0">
-               {poolRewardAmount?.silverPoolReward ? poolRewardAmount?.silverPoolReward : 0}
+            {poolRewardAmount?.goldPoolReward ? poolRewardAmount?.goldPoolReward :0}
             </p>
             </div>
             <p className="text-[#8C8B8B] text-xs md:text-lg font-semibold mt-0 md:mt-3 text-nowrap">
-            Your Gold Pool Reward
+            Gold Pool Reward
             </p>
           </div>
           <div className="bg-[#202020] rounded-full p-[8px]">
@@ -100,12 +99,12 @@ const Blocks = ({globalLoading}) => {
           <div className="flex flex-row items-center space-x-2">
           <img src={POX} alt="USDX" className="w-8 h-8" />
             <p className="text-md md:text-2xl lg:text-xl xl:text-4xl text-white font-bold pb-2 md:pb-0">
-               {poolRewardAmount?.goldPoolReward ? poolRewardAmount?.goldPoolReward :0}
+            {poolRewardAmount?.silverPoolReward ? poolRewardAmount?.silverPoolReward : 0}
             </p>
 
             </div>
             <p className="text-[#8C8B8B] text-xs md:text-lg font-semibold mt-0 md:mt-3 text-nowrap">
-              Your Silver Pool Reward
+                Silver Pool Reward
             </p>
           </div>
           <div className="bg-[#202020] rounded-full p-[8px]">
@@ -124,11 +123,14 @@ const Blocks = ({globalLoading}) => {
           }}
         >
           <div>
+          <div className="flex flex-row items-center space-x-2">
+          <img src={POX} alt="USDX" className="w-8 h-8" />
             <p className="text-md md:text-2xl lg:text-xl xl:text-4xl text-white font-bold pb-2 md:pb-0">
-             $ {referralAmount ? (Number(referralAmount).toFixed(4)) :0}
+              {referralAmount ? (Number(referralAmount).toFixed(4)) :0}
             </p>
+            </div>
             <p className="text-[#8C8B8B] text-xs md:text-lg font-semibold mt-0 md:mt-3 text-nowrap">
-              Your Total Referral Earning
+              Total Referral Earning
             </p>
           </div>
           <Link to="/referralearning">
