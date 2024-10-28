@@ -22,7 +22,8 @@ pipeline {
         stage('Installing Dependencies') {
             steps {
                 sh 'rm -rf node_modules || true'
-                sh 'npm i' 
+                 
+                sh 'npm install vite'
             }
         }
 
