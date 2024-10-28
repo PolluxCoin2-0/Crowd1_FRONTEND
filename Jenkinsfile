@@ -15,7 +15,7 @@ pipeline {
                     configFileProvider([configFile(fileId: '853e5e46-7516-4592-a14e-484cc533db86', variable: 'ENV_FILE')]) {
                         sh 'cp "$ENV_FILE" /home/jenkins/workspace//crowd1-frontend-cicd-pipeline/.env'
                     }
-                }
+                } 
             }
         }
 
