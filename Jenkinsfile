@@ -1,4 +1,4 @@
-pipeline { 
+ pipeline { 
     agent { label 'EXPLORER_FRONTEND_NODE' }
 
     stages {
