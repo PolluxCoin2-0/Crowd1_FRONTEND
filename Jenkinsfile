@@ -37,7 +37,7 @@ pipeline {
 
         stage('Deploy to Web Server') {
             steps {
-                sh 'rm -rf /var/www/html/crowd1F*'
+                
                 
                 sh 'cp -r dist/* /var/www/html/crowd1F'
             
