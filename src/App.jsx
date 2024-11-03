@@ -28,35 +28,35 @@ function ReferralRedirect() {
 
 function App() {
   return (
-    <div className="min-h-screen bg-black flex justify-center items-center">
-      <p className="font-bold text-white text-3xl">Our website is currently under maintenance.</p>
-    </div>
-    // <Provider store={store}>
-    //   <PersistGate loading={null} persistor={persistor}>
-    //     <Router>
-    //       {/* Toast container */}
-    //       <ToastContainer
-    //         position="top-center"
-    //         autoClose={3000}
-    //         theme="dark"
-    //         newestOnTop={true}
-    //         pauseOnFocusLoss
-    //         toastClassName="custom-toast"
-    //       />
+    // <div className="min-h-screen bg-black flex justify-center items-center">
+    //   <p className="font-bold text-white text-3xl">Coming Soon...</p>
+    // </div>
+    <Provider store={store}>
+      <PersistGate loading={null} persistor={persistor}>
+        <Router>
+          {/* Toast container */}
+          <ToastContainer
+            position="top-center"
+            autoClose={3000}
+            theme="dark"
+            newestOnTop={true}
+            pauseOnFocusLoss
+            toastClassName="custom-toast"
+          />
           
-    //       {/* Referral redirection logic */}
-    //       <ReferralRedirect />
+          {/* Referral redirection logic */}
+          <ReferralRedirect />
 
-    //       {/* App routes */}
-    //       <Routes>
-    //         <Route path="/" element={<Login />} />
-    //         <Route path="/register" element={<Register />} />
-    //         <Route path="/home" element={<Home />} />
-    //         <Route path="/referralearning" element={<ReferralEarning />} />
-    //       </Routes>
-    //     </Router>
-    //   </PersistGate>
-    // </Provider>
+          {/* App routes */}
+          <Routes>
+            <Route path="/" element={<Login />} />
+            <Route path="/register" element={<Register />} />
+            <Route path="/home" element={<Home />} />
+            <Route path="/referralearning" element={<ReferralEarning />} />
+          </Routes>
+        </Router>
+      </PersistGate>
+    </Provider>
   );
 }
 
