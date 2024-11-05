@@ -4,7 +4,7 @@ import Blocks from "./Blocks";
 import DepositAndWithdraw from "./DepositAndWithdraw";
 import { toast } from "react-toastify";
 import { useSelector, useDispatch } from "react-redux";
-import { setDataObject } from "../redux/slice"; 
+import { setDataObject } from "../redux/slice";
 // Action to clear the wallet data
 import LogoImage from "../assets/Logo.png";
 import { Link } from "react-router-dom";
@@ -17,7 +17,7 @@ const Home = () => {
   const stateData = useSelector((state) => state?.wallet?.dataObject);
   const [globalLoading, setGlobalLoading] = useState(false);
 
-  useEffect(()=>{},[globalLoading])
+  useEffect(() => {}, [globalLoading]);
   // Function to copy text
   const handleRegisterCopy = (copiedText) => {
     navigator.clipboard.writeText(`https://crowd1.club/referral/${copiedText}`);
@@ -46,8 +46,12 @@ const Home = () => {
         `,
         }}
       >
-        <Link to = "/home">
-          <img src={LogoImage} alt="crowd1-logo" className="w-[80%] md:w-full" />
+        <Link to="/home">
+          <img
+            src={LogoImage}
+            alt="crowd1-logo"
+            className="w-[80%] md:w-full"
+          />
         </Link>
 
         <Link to="/">
@@ -96,10 +100,16 @@ const Home = () => {
         <Blocks globalLoading={globalLoading} />
 
         {/* Deposit and Withdraw */}
-        <DepositAndWithdraw globalLoading={globalLoading} setGlobalLoading={setGlobalLoading}/>
+        <DepositAndWithdraw
+          globalLoading={globalLoading}
+          setGlobalLoading={setGlobalLoading}
+        />
 
         {/* Table */}
-        <MintTable globalLoading={globalLoading} setGlobalLoading={setGlobalLoading}/>
+        <MintTable
+          globalLoading={globalLoading}
+          setGlobalLoading={setGlobalLoading}
+        />
       </div>
     </div>
   );
