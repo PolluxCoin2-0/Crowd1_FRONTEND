@@ -28,7 +28,6 @@ const DepositAndWithdraw = ({ globalLoading, setGlobalLoading }) => {
       stateData?.walletAddress
     );
     const userData = await userDetailsApi(stateData?.walletAddress);
-    console.log({ userData });
     setUserTotallROIReturn(
       userData?.data?.previousDepositAmount +
         userData?.data?.previousReward +
@@ -82,13 +81,10 @@ const DepositAndWithdraw = ({ globalLoading, setGlobalLoading }) => {
         stateData?.referredBy,
         stateData?.walletAddress
       );
-      console.log("depositdata", depositApiData?.data?.transaction);
 
       const signedTransaction2 = await window.pox.signdata(
         depositApiData?.data?.transaction
       );
-
-      console.log("signedTransaction: ", signedTransaction2);
 
       const broadcast2 = await window.pox.broadcast(
         JSON.parse(signedTransaction2[1])
@@ -99,7 +95,6 @@ const DepositAndWithdraw = ({ globalLoading, setGlobalLoading }) => {
         return;
       }
 
-      console.log("broadcast", broadcast2);
       await fetchData();
       setGlobalLoading(!globalLoading);
       toast.success("Deposited successfully.");
@@ -149,12 +144,9 @@ const DepositAndWithdraw = ({ globalLoading, setGlobalLoading }) => {
     try {
       setWithdrawLoading(true);
       const withDrawApiData = await withdrawFundApi(stateData?.walletAddress);
-      console.log(withDrawApiData);
       const signedTransaction = await window.pox.signdata(
         withDrawApiData?.data?.transaction
       );
-
-      console.log("signedTransaction: ", signedTransaction);
 
       const broadcast = await window.pox.broadcast(
         JSON.parse(signedTransaction[1])
@@ -166,7 +158,6 @@ const DepositAndWithdraw = ({ globalLoading, setGlobalLoading }) => {
         return;
       }
 
-      console.log("broadcast", broadcast);
       await fetchData();
       setGlobalLoading(!globalLoading);
       toast.success("Withdrawn successfully.");

@@ -23,7 +23,6 @@ const MintTable = ({ globalLoading, setGlobalLoading }) => {
     // GET THE DATA FROM DB
     const userDataFromDB = await getDataFromDBApi(stateData?.token);
     setPreviousDataArray(userDataFromDB?.data);
-    console.log("userDataFromDB", userDataFromDB?.data);
   };
 
   useEffect(() => {
@@ -64,7 +63,6 @@ const MintTable = ({ globalLoading, setGlobalLoading }) => {
     try {
       setIsLoading(true);
       const lastMintTime = await getUserMintedTimeApi(stateData?.token);
-      console.log("time", lastMintTime?.data);
       const currentTime = new Date(); // Get current time
 
       // Check if lastMintTime?.data is a valid date
@@ -89,20 +87,13 @@ const MintTable = ({ globalLoading, setGlobalLoading }) => {
         }
       }
       const mintApiData = await mintApi(stateData?.walletAddress);
-      console.log(mintApiData);
 
       const signedTransaction = await window.pox.signdata(
         mintApiData?.data?.transaction
       );
 
-      console.log("signedTransaction: ", signedTransaction);
+      const broadcast = await window.pox.broadcast(JSON.parse(signedTransaction[1]));
 
-      const broadcast =
-        // JSON.stringify(
-        await window.pox.broadcast(JSON.parse(signedTransaction[1]));
-      // );
-
-      console.log("broadcast", broadcast);
       if (broadcast[2] !== "Broadcast Successfully Done") {
         setIsLoading(false);
         toast.error("Failed to broadcast the transaction.");
@@ -110,10 +101,7 @@ const MintTable = ({ globalLoading, setGlobalLoading }) => {
       }
 
       // update user mint time
-      const updateMintedUserData = await updateUserMintedTimeApi(
-        stateData?.token
-      );
-      console.log("updateMintedUserData: ", updateMintedUserData);
+      await updateUserMintedTimeApi( stateData?.token);
 
       // Calculate the threshold based on cycleCount
       const mintThreshold = 30 + (userDataApi?.cycleCount - 1) * 10;
@@ -121,7 +109,7 @@ const MintTable = ({ globalLoading, setGlobalLoading }) => {
         // SAVE TO DB
         const time = getFormattedDate();
         try {
-          const saveDataToDB = await saveDataToDBApi(
+          await saveDataToDBApi(
             userDataApi?.cycleCount,
             userDataApi?.depositAmount,
             30,
@@ -130,8 +118,6 @@ const MintTable = ({ globalLoading, setGlobalLoading }) => {
             mintThreshold,
             stateData?.token
           );
-          // toast.success("save to DB success");
-          console.log("savedData: ", saveDataToDB);
         } catch (error) {
           console.log(error);
           toast.error("Something went wrong");

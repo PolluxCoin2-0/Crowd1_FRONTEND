@@ -41,7 +41,6 @@ const Register = () => {
     try {
       setIsLoading(true);
       const response = await registerApi(myWallet, referralWallet);
-      console.log(response);
       // Handle successful response
       if (response.data === "Duplicate Wallet") {
         toast.error("Duplicate Wallet.");
