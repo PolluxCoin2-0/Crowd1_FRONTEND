@@ -15,14 +15,14 @@ export async function getPolinkweb() {
           const parsedDetailsObject = JSON.parse(JSON.stringify(detailsData)); // Safely parse data
 
           // Check for network condition
-          if (parsedDetailsObject[1]?.data?.Network === "Yuvi Testnet") {
-            toast.error("Switch to Mainnet Network");
-            reject(new Error("Network is Yuvi Testnet")); // Reject promise if the network is incorrect
-            return;
-          }
+          // if (parsedDetailsObject[1]?.data?.Network === "Yuvi Testnet") {
+          //   toast.error("Switch to Mainnet Network");
+          //   reject(new Error("Network is Yuvi Testnet")); // Reject promise if the network is incorrect
+          //   return;
+          // }
 
           // Get wallet address
-          const walletAddress = parsedDetailsObject[1]?.data?.wallet_address;
+          const walletAddress = parsedDetailsObject[1]?.data;
           if (walletAddress) {
             resolve(walletAddress); // Resolve the promise with the wallet address
           } else {

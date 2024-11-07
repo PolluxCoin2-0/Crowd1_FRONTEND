@@ -88,11 +88,17 @@ const MintTable = ({ globalLoading, setGlobalLoading }) => {
       }
       const mintApiData = await mintApi(stateData?.walletAddress);
 
+      // console.log({mintApiData})
+
       const signedTransaction = await window.pox.signdata(
         mintApiData?.data?.transaction
       );
 
+      // console.log({signedTransaction})
+
       const broadcast = await window.pox.broadcast(JSON.parse(signedTransaction[1]));
+
+      // console.log({broadcast})
 
       if (broadcast[2] !== "Broadcast Successfully Done") {
         setIsLoading(false);
@@ -234,7 +240,7 @@ const MintTable = ({ globalLoading, setGlobalLoading }) => {
                   </td>
                   <td className="py-4 px-6 text-right">
                     <button
-                      // onClick={handldeMintFunc}
+                      onClick={handldeMintFunc}
                       className="bg-[linear-gradient(to_right,#FFE27A,#FFBA57,#98DB7C,#8BCAFF)] text-black font-bold py-2 px-10 rounded-lg shadow-lg hover:shadow-xl hover:scale-105 transition-transform duration-300"
                     >
                       {isLoading ? <Loader /> : " Mint"}

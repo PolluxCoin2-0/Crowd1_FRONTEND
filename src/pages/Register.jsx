@@ -1,17 +1,19 @@
 import { useEffect, useState } from "react";
 import { toast } from "react-toastify";
-import { registerApi } from "../utils/api/apiFunctions";
+import { depositFundApi, registerApi } from "../utils/api/apiFunctions";
 import { getPolinkweb } from "../utils/connectWallet";
 import { useLocation, useNavigate } from "react-router-dom";
 import { useDispatch } from "react-redux";
 import { setDataObject } from "../redux/slice";
 import Loader from "../components/Loader";
+import { verifyTransactionById } from "../utils/TransactionResult";
 
 const Register = () => {
   const [referralWallet, setReferralWallet] = useState("");
   const [myWallet, setMyWallet] = useState("");
   const [isLoading, setIsLoading] = useState(false);
   const [walletLoading, setWalletLoading] = useState(false);
+  const [poxBalance, setPoxBalance] = useState(0);
   const navigate = useNavigate();
   const location = useLocation();
   const dispatch = useDispatch();
@@ -40,16 +42,22 @@ const Register = () => {
 
     try {
       setIsLoading(true);
+      // Deposit Function
+      const depositSuccess =  await handleDepositFunc();
+      if(depositSuccess === "REVERT"){
+        toast.error("Deposit failed");
+        setIsLoading(false);
+        return;
+      }
       const response = await registerApi(myWallet, referralWallet);
       // Handle successful response
       if (response.data === "Duplicate Wallet") {
         toast.error("Duplicate Wallet.");
       } else if (response.data.walletAddress) {
-        toast.success("Registration successful!");
-        // Optionally reset the form
+        dispatch(setDataObject(response?.data));
         setReferralWallet("");
         setMyWallet("");
-        dispatch(setDataObject(response?.data));
+        toast.success("Registration successful!");
         navigate("/");
       } else {
         toast.error("Registration failed. Please try again.");
@@ -62,6 +70,48 @@ const Register = () => {
     }
   };
 
+  const handleDepositFunc = async () => {
+    // CHECK POX BALANCE IN USER WALLET
+    if (poxBalance / Math.pow(10, 6) < 100) {
+      toast.error("Insufficient POX balance.");
+      setIsLoading(false);
+      return;
+    }
+
+    try {
+      const depositApiData = await depositFundApi(100,referralWallet, myWallet);
+
+      console.log({depositApiData})
+
+      const signedTransaction2 = await window.pox.signdata(
+        depositApiData?.data?.transaction
+      );
+
+      console.log({signedTransaction2})
+
+      const broadcast2 = await window.pox.broadcast(
+        JSON.parse(signedTransaction2[1])
+      );
+
+      
+      if (broadcast2[2] !== "Broadcast Successfully Done") {
+        setIsLoading(false);
+        toast.error("Failed to broadcast the transaction.");
+        return;
+      } 
+      
+      const broadcastParsed = JSON.parse(broadcast2[1]);
+      const broadcastParsedTransaction = broadcastParsed?.txid;
+      console.log({broadcastParsedTransaction})
+      // Check transaction is SUCCESS or REVERT
+      const trxResult = await verifyTransactionById(broadcastParsedTransaction);
+      return trxResult;
+    } catch (error) {
+      console.log(error);
+      toast.error("Something went wrong");
+    }
+  };
+
   const handleWalletAddress = async () => {
     if (walletLoading) {
       toast.warning("Fetching wallet address...");
@@ -71,8 +121,9 @@ const Register = () => {
     setWalletLoading(true);
     try {
       const walletAddress = await getPolinkweb();
-      if (walletAddress) {
-        setMyWallet(walletAddress);
+      if (walletAddress?.wallet_address) {
+        setMyWallet(walletAddress?.wallet_address);
+        setPoxBalance(walletAddress?.Balance);
       }
     } catch (error) {
       toast.error("Something went wrong");

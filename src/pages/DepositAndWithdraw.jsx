@@ -28,6 +28,7 @@ const DepositAndWithdraw = ({ globalLoading, setGlobalLoading }) => {
       stateData?.walletAddress
     );
     const userData = await userDetailsApi(stateData?.walletAddress);
+    console.log({userData})
     setUserTotallROIReturn(
       userData?.data?.previousDepositAmount +
         userData?.data?.previousReward +
@@ -210,7 +211,7 @@ const DepositAndWithdraw = ({ globalLoading, setGlobalLoading }) => {
             </div>
 
             <button
-              // onClick={handleDepositFunc}
+              onClick={handleDepositFunc}
               className="mt-8 w-full bg-[linear-gradient(to_right,#FFE27A,#FFBA57,#98DB7C,#8BCAFF)] text-black font-bold text-lg py-3 rounded-lg 
               shadow-lg hover:shadow-xl hover:scale-105 transition-transform duration-300 ease-in-out"
             >
@@ -258,7 +259,7 @@ const DepositAndWithdraw = ({ globalLoading, setGlobalLoading }) => {
             </div>
 
             <button
-              // onClick={handleWithDrawFunc}
+              onClick={handleWithDrawFunc}
               className="mt-8 w-full bg-[linear-gradient(to_right,#FFE27A,#FFBA57,#98DB7C,#8BCAFF)] text-black font-bold text-lg py-3 rounded-lg shadow-lg hover:shadow-xl hover:scale-105 transition-transform duration-300 ease-in-out"
             >
               {withdrawLoading ? <Loader /> : "Withdraw"}

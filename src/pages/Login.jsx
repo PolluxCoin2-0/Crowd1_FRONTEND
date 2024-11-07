@@ -19,10 +19,10 @@ const Login = () => {
     }
 
     const walletAddress = await getPolinkweb();
-    if (walletAddress) {
+    if (walletAddress?.wallet_address) {
       try {
         setIsLoading(true);
-        const apiData = await loginApi(walletAddress);
+        const apiData = await loginApi(walletAddress?.wallet_address);
         if (apiData?.data?.walletAddress) {
           //save apiResponse object in state management redux
           dispatch(setDataObject(apiData?.data));
@@ -57,7 +57,7 @@ const Login = () => {
         </div>
         <div className="flex flex-col md:flex-row space-y-3 md:space-y-0 md:space-x-4">
           <Link
-            // to="/register"
+            to="/register"
             className="border border-white text-white py-3 px-4 sm:px-6 font-bold rounded-full hover:bg-white hover:text-gray-900 transition-all w-full md:w-1/2"
           >
             Register
@@ -65,7 +65,7 @@ const Login = () => {
           <button
             className="whitespace-nowrap bg-[linear-gradient(to_right,#FFE27A,#FFBA57,#98DB7C,#8BCAFF)] text-black font-bold py-3 px-4 sm:px-6 rounded-full
              shadow-lg hover:shadow-xl transition-all w-full md:w-1/2"
-            // onClick={handleLogin}
+            onClick={handleLogin}
           >
             {isLoading ? <Loader /> : " Connect Wallet"}
           </button>
