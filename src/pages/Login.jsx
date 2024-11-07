@@ -17,11 +17,11 @@ const Login = () => {
       toast.warning("Login in progress");
       return;
     }
+    setIsLoading(true);
 
     const walletAddress = await getPolinkweb();
     if (walletAddress?.wallet_address) {
       try {
-        setIsLoading(true);
         const apiData = await loginApi(walletAddress?.wallet_address);
         if (apiData?.data?.walletAddress) {
           //save apiResponse object in state management redux
