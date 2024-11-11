@@ -1,6 +1,7 @@
 import { useSelector } from "react-redux";
 import {
   getDataFromDBApi,
+  getLastMintedTimeApi,
   getUserMintedTimeApi,
   mintApi,
   saveDataToDBApi,
@@ -16,6 +17,7 @@ const MintTable = ({ globalLoading, setGlobalLoading }) => {
   const [userDataApi, setUserDataApi] = useState({});
   const [previousDataArray, setPreviousDataArray] = useState([]);
   const [isLoading, setIsLoading] = useState(false);
+  const [lastMintedTime, setLastMintedTime] = useState("");
 
   const fetchData = async () => {
     const userDataApi = await userDetailsApi(stateData?.walletAddress);
@@ -23,6 +25,9 @@ const MintTable = ({ globalLoading, setGlobalLoading }) => {
     // GET THE DATA FROM DB
     const userDataFromDB = await getDataFromDBApi(stateData?.token);
     setPreviousDataArray(userDataFromDB?.data);
+    const lastMintedData = await getLastMintedTimeApi(stateData?.walletAddress);
+    const lastMintedDate = lastMintedData?.lastMintedAt?.split(",")[0]; // Extract only the date part
+    setLastMintedTime(lastMintedDate); // Set last minted date to state variable
   };
 
   useEffect(() => {
@@ -96,7 +101,9 @@ const MintTable = ({ globalLoading, setGlobalLoading }) => {
 
       // console.log({signedTransaction})
 
-      const broadcast = await window.pox.broadcast(JSON.parse(signedTransaction[1]));
+      const broadcast = await window.pox.broadcast(
+        JSON.parse(signedTransaction[1])
+      );
 
       // console.log({broadcast})
 
@@ -107,7 +114,7 @@ const MintTable = ({ globalLoading, setGlobalLoading }) => {
       }
 
       // update user mint time
-      await updateUserMintedTimeApi( stateData?.token);
+      await updateUserMintedTimeApi(stateData?.token);
 
       // Calculate the threshold based on cycleCount
       const mintThreshold = 30 + (userDataApi?.cycleCount - 1) * 10;
@@ -151,6 +158,7 @@ const MintTable = ({ globalLoading, setGlobalLoading }) => {
               <th className="py-4 px-6 text-center">Total Earnings</th>
               <th className="py-4 px-6 text-center">Invest Date</th>
               <th className="py-4 px-6 text-center">Maturity Days</th>
+              <th className="py-4 px-6 text-center">Last Minted</th>
               <th className="py-4 px-6 text-right">Mint Reward</th>
             </tr>
           </thead>
@@ -188,6 +196,7 @@ const MintTable = ({ globalLoading, setGlobalLoading }) => {
                           30 + (data?.cycleNo - 1) * 10
                         }`}
                       </td>
+                      <td className="py-4 px-6 text-center">Completed</td>
                       <td className="py-4 px-6 text-right">
                         <button
                           className="bg-[linear-gradient(to_right,rgba(255,226,122,0.5),rgba(255,186,87,0.5),rgba(152,219,124,0.5),rgba(139,202,255,0.5))]
@@ -238,6 +247,7 @@ const MintTable = ({ globalLoading, setGlobalLoading }) => {
                         }`
                       : 0}
                   </td>
+                  <td className="py-4 px-6 text-center">{lastMintedTime}</td>
                   <td className="py-4 px-6 text-right">
                     <button
                       onClick={handldeMintFunc}

@@ -17,6 +17,7 @@ const API_ENDPOINTS = {
     userMint:"/mint",
     getMintTime:"/getMintDate",
     updateMintTime:"/updateMintDate",
+    lastMintTime: "/LastMintedAt",
   },
   DB:{
     saveToDB : "/createCycle",

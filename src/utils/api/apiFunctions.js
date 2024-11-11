@@ -181,3 +181,10 @@ export const getDataOfDirectReferral = async (token) => {
     search: "",
   });
 };
+
+// LAST MINT TIME
+export const getLastMintedTimeApi = async (walletAddress) => {
+  return postRequest(API_ENDPOINTS.mint.lastMintTime, {
+    walletAddress,
+  });
+};
