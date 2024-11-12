@@ -21,12 +21,11 @@ const ReferralEarning = () => {
   }, [stateData?.token]);
 
   const handleSignOut = () => {
-    dispatch(setDataObject()); // Clear wallet data using dispatch
+    dispatch(setDataObject());
     toast.success("Signed out successfully");
   };
 
   const handleToggle = (level) => {
-    // Toggle the selected level and close others
     setExpandedLevel((prev) => (prev === level ? null : level));
   };
 
@@ -95,6 +94,7 @@ const ReferralEarning = () => {
                               className="flex flex-col md:flex-row items-start md:justify-between md:items-center py-2 border-b border-gray-700 last:border-0"
                             >
                               <span>{ref.walletAddress}</span>
+                              <span>{ref.active?"ACTIVE":"INACTIVE"}</span>
                               <span>
                                 {new Date(ref.createdAt).toLocaleString()}
                               </span>
@@ -130,6 +130,7 @@ const ReferralEarning = () => {
                               className="flex flex-col md:flex-row items-start md:justify-between md:items-center py-2 border-b border-gray-700 last:border-0"
                             >
                               <span>{ref.walletAddress}</span>
+                              <span>{ref.active?"ACTIVE":"INACTIVE"}</span>
                               <span>
                                 {new Date(ref.createdAt).toLocaleString()}
                               </span>
@@ -165,6 +166,7 @@ const ReferralEarning = () => {
                               className="flex flex-col md:flex-row items-start md:justify-between md:items-center py-2 border-b border-gray-700 last:border-0"
                             >
                               <span>{ref.walletAddress}</span>
+                              <span>{ref.active?"ACTIVE":"INACTIVE"}</span>
                               <span>
                                 {new Date(ref.createdAt).toLocaleString()}
                               </span>
@@ -201,6 +203,7 @@ const ReferralEarning = () => {
                               className="flex flex-col md:flex-row items-start md:justify-between md:items-center py-2 border-b border-gray-700 last:border-0"
                             >
                               <span>{ref.walletAddress}</span>
+                              <span>{ref.active?"ACTIVE":"INACTIVE"}</span>
                               <span>
                                 {new Date(ref.createdAt).toLocaleString()}
                               </span>
@@ -236,6 +239,7 @@ const ReferralEarning = () => {
                               className="flex flex-col md:flex-row items-start md:justify-between md:items-center py-2 border-b border-gray-700 last:border-0"
                             >
                               <span>{ref.walletAddress}</span>
+                              <span>{ref.active?"ACTIVE":"INACTIVE"}</span>
                               <span>
                                 {new Date(ref.createdAt).toLocaleString()}
                               </span>

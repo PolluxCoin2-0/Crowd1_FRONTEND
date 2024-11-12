@@ -26,8 +26,8 @@ const MintTable = ({ globalLoading, setGlobalLoading }) => {
     const userDataFromDB = await getDataFromDBApi(stateData?.token);
     setPreviousDataArray(userDataFromDB?.data);
     const lastMintedData = await getLastMintedTimeApi(stateData?.walletAddress);
-    const lastMintedDate = lastMintedData?.lastMintedAt?.split(",")[0]; // Extract only the date part
-    setLastMintedTime(lastMintedDate); // Set last minted date to state variable
+    const lastMintedDate = lastMintedData?.lastMintedAt?.split(",")[0];
+    setLastMintedTime(lastMintedDate); 
   };
 
   useEffect(() => {
