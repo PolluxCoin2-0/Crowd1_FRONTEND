@@ -94,7 +94,7 @@ const ReferralEarning = () => {
                               className="flex flex-col md:flex-row items-start md:justify-between md:items-center py-2 border-b border-gray-700 last:border-0"
                             >
                               <span>{ref.walletAddress}</span>
-                              <span>{ref.active?"ACTIVE":"INACTIVE"}</span>
+                              <span className={`${ref.active?"text-green-600 font-semibold":"text-red-600 font-semibold"}`}>{ref.active?"ACTIVE":"INACTIVE"}</span>
                               <span>
                                 {new Date(ref.createdAt).toLocaleString()}
                               </span>
@@ -130,7 +130,7 @@ const ReferralEarning = () => {
                               className="flex flex-col md:flex-row items-start md:justify-between md:items-center py-2 border-b border-gray-700 last:border-0"
                             >
                               <span>{ref.walletAddress}</span>
-                              <span>{ref.active?"ACTIVE":"INACTIVE"}</span>
+                              <span className={`${ref.active?"text-green-600 font-semibold":"text-red-600 font-semibold"}`}>{ref.active?"ACTIVE":"INACTIVE"}</span>
                               <span>
                                 {new Date(ref.createdAt).toLocaleString()}
                               </span>
@@ -166,7 +166,7 @@ const ReferralEarning = () => {
                               className="flex flex-col md:flex-row items-start md:justify-between md:items-center py-2 border-b border-gray-700 last:border-0"
                             >
                               <span>{ref.walletAddress}</span>
-                              <span>{ref.active?"ACTIVE":"INACTIVE"}</span>
+                              <span className={`${ref.active?"text-green-600 font-semibold":"text-red-600 font-semibold"}`}>{ref.active?"ACTIVE":"INACTIVE"}</span>
                               <span>
                                 {new Date(ref.createdAt).toLocaleString()}
                               </span>
@@ -203,7 +203,7 @@ const ReferralEarning = () => {
                               className="flex flex-col md:flex-row items-start md:justify-between md:items-center py-2 border-b border-gray-700 last:border-0"
                             >
                               <span>{ref.walletAddress}</span>
-                              <span>{ref.active?"ACTIVE":"INACTIVE"}</span>
+                              <span className={`${ref.active?"text-green-600 font-semibold":"text-red-600 font-semibold"}`}>{ref.active?"ACTIVE":"INACTIVE"}</span>
                               <span>
                                 {new Date(ref.createdAt).toLocaleString()}
                               </span>
@@ -239,7 +239,7 @@ const ReferralEarning = () => {
                               className="flex flex-col md:flex-row items-start md:justify-between md:items-center py-2 border-b border-gray-700 last:border-0"
                             >
                               <span>{ref.walletAddress}</span>
-                              <span>{ref.active?"ACTIVE":"INACTIVE"}</span>
+                              <span className={`${ref.active?"text-green-600 font-semibold":"text-red-600 font-semibold"}`}>{ref.active?"ACTIVE":"INACTIVE"}</span>
                               <span>
                                 {new Date(ref.createdAt).toLocaleString()}
                               </span>
