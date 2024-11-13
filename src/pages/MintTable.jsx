@@ -26,8 +26,15 @@ const MintTable = ({ globalLoading, setGlobalLoading }) => {
     const userDataFromDB = await getDataFromDBApi(stateData?.token);
     setPreviousDataArray(userDataFromDB?.data);
     const lastMintedData = await getLastMintedTimeApi(stateData?.walletAddress);
-    const lastMintedDate = lastMintedData?.lastMintedAt?.split(",")[0];
-    setLastMintedTime(lastMintedDate); 
+    const lastMintedDateUTC = lastMintedData?.lastMintedAt;
+    if (lastMintedDateUTC) {
+      // Parse the UTC date string to a Date object
+      const date = new Date(lastMintedDateUTC);
+      // Convert to IST by formatting the date with the Indian timezone
+      const options = { timeZone: 'Asia/Kolkata', year: 'numeric', month: '2-digit', day: '2-digit', hour: '2-digit', minute: '2-digit', second: '2-digit' };
+      const lastMintedDateIST = new Intl.DateTimeFormat('en-IN', options).format(date);
+      setLastMintedTime(lastMintedDateIST);
+  }
   };
 
   useEffect(() => {
