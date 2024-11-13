@@ -17,7 +17,7 @@ const MintTable = ({ globalLoading, setGlobalLoading }) => {
   const [userDataApi, setUserDataApi] = useState({});
   const [previousDataArray, setPreviousDataArray] = useState([]);
   const [isLoading, setIsLoading] = useState(false);
-  const [lastMintedTime, setLastMintedTime] = useState("");
+  const [lastMintedTimeForTable, setLastMintedTimeForTable] = useState("");
 
   const fetchData = async () => {
     const userDataApi = await userDetailsApi(stateData?.walletAddress);
@@ -27,14 +27,16 @@ const MintTable = ({ globalLoading, setGlobalLoading }) => {
     setPreviousDataArray(userDataFromDB?.data);
     const lastMintedData = await getLastMintedTimeApi(stateData?.walletAddress);
     const lastMintedDateUTC = lastMintedData?.lastMintedAt;
-    if (lastMintedDateUTC) {
-      // Parse the UTC date string to a Date object
-      const date = new Date(lastMintedDateUTC);
-      // Convert to IST by formatting the date with the Indian timezone
-      const options = { timeZone: 'Asia/Kolkata', year: 'numeric', month: '2-digit', day: '2-digit', hour: '2-digit', minute: '2-digit', second: '2-digit' };
-      const lastMintedDateIST = new Intl.DateTimeFormat('en-IN', options).format(date);
-      setLastMintedTime(lastMintedDateIST);
-  }
+    console.log({ lastMintedDateUTC });
+    
+    if (lastMintedDateUTC === "01/01/1970, 05:30:00") {
+        // If the value is the Unix epoch start in IST, set "First Minting"
+        setLastMintedTimeForTable("First Minting");
+    } else if (lastMintedDateUTC) {
+      setLastMintedTimeForTable(lastMintedDateUTC);
+    } else {
+        setLastMintedTimeForTable("No date available");
+    }
   };
 
   useEffect(() => {
@@ -140,14 +142,14 @@ const MintTable = ({ globalLoading, setGlobalLoading }) => {
           );
         } catch (error) {
           console.log(error);
-          toast.error("Something went wrong");
+          toast.error("Something went wrong DB");
         }
       }
       await fetchData();
       setGlobalLoading(!globalLoading);
       toast.success("Minted successfully.");
     } catch (error) {
-      toast.error("Something went wrong");
+      toast.error("Something went wrong mint");
     } finally {
       setIsLoading(false);
     }
@@ -254,7 +256,7 @@ const MintTable = ({ globalLoading, setGlobalLoading }) => {
                         }`
                       : 0}
                   </td>
-                  <td className="py-4 px-6 text-center">{lastMintedTime}</td>
+                  <td className="py-4 px-6 text-center">{lastMintedTimeForTable}</td>
                   <td className="py-4 px-6 text-right">
                     <button
                       onClick={handldeMintFunc}
