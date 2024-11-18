@@ -19,11 +19,13 @@ const DepositAndWithdraw = ({ globalLoading, setGlobalLoading }) => {
   const [mintCount, setMintCount] = useState(0);
   const [availableAmount, setAvailableAmount] = useState(0);
   const [isLoading, setIsLoading] = useState(false);
+  const [dataLoading, setDataLoading] = useState(false);
   const [withdrawLoading, setWithdrawLoading] = useState(false);
   const [isDeposit, setIsDeposit] = useState(false);
   const [directReferralCount, setDirectReferralCount] = useState(0);
 
   const fetchData = async () => {
+    setDataLoading(true);
     const referralAmount = await totalReferralReturnsApi(
       stateData?.walletAddress
     );
@@ -41,6 +43,7 @@ const DepositAndWithdraw = ({ globalLoading, setGlobalLoading }) => {
     setPreCycleCount(userData?.data?.preCycleCount);
     const directReferralData = await getDataOfDirectReferral(stateData?.token);
     setDirectReferralCount(directReferralData?.data?.leve1Count);
+    setDataLoading(false);
   };
 
   useEffect(() => {
@@ -51,6 +54,10 @@ const DepositAndWithdraw = ({ globalLoading, setGlobalLoading }) => {
 
   // DEPOSIT FUNCTION
   const handleDepositFunc = async () => {
+    if(dataLoading){
+      return;
+    }
+
     if (isLoading) {
       toast.warning("Deposit in progress...");
       return;
