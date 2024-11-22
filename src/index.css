@@ -10,3 +10,28 @@
       margin: 0;
     }
   }
+
+  .moving-text {
+    display: inline-block; /* Ensures the text behaves like a block for animations */
+    white-space: nowrap; /* Prevents the text from wrapping */
+    animation: move-text 15s linear infinite; /* Animation lasts 5 seconds and loops infinitely */
+    font-size: 1.5rem; /* Adjust font size */
+  }
+  
+  /* Background (optional, for better visibility) */
+  body {
+    background-color: #282c34;
+    color: white;
+    font-family: Arial, sans-serif;
+  }
+  
+  /* Keyframes for animation */
+  @keyframes move-text {
+    0% {
+      transform: translateX(-100%);
+    }
+    100% {
+      transform: translateX(100%);
+    }
+  }
+  

@@ -66,6 +66,7 @@ const Home = () => {
           </div>
         </Link>
       </nav>
+      <p className="moving-text pb-2 text-green-300 font-bold">Gold and silver Can put one ID direct for pool income!</p>
 
       <div className="px-4 2xl:px-16">
         {/* Referral Link and Contract Address */}
