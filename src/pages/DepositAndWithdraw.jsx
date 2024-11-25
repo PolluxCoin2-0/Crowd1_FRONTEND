@@ -42,6 +42,7 @@ const DepositAndWithdraw = ({ globalLoading, setGlobalLoading }) => {
     setIsDeposit(userData?.data?.hasNewDeposit);
     setPreCycleCount(userData?.data?.preCycleCount);
     const directReferralData = await getDataOfDirectReferral(stateData?.token);
+    console.log({directReferralCount})
     setDirectReferralCount(directReferralData?.data?.leve1Count);
     setDataLoading(false);
   };
@@ -63,16 +64,15 @@ const DepositAndWithdraw = ({ globalLoading, setGlobalLoading }) => {
       return;
     }
 
-    if (cycleCount % (30 + (cycleCount - 1) * 10) !== 0) {
+    setIsLoading(true);
+    const maxMintCount = cycleCount <= 4 ? 30 + (cycleCount - 1) * 10 : 60;
+
+    if (mintCount === maxMintCount) {
       toast.error(
-        `You can't deposit more than once every ${
-          30 + (cycleCount - 1) * 10
-        } days.`
+        `You can't deposit more than once every ${maxMintCount} days.`
       );
       return;
     }
-
-    setIsLoading(true);
 
     // CHECK POX BALANCE IN USER WALLET
     const userBalance = await window.pox.getDetails();
