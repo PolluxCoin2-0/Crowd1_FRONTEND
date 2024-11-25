@@ -67,10 +67,11 @@ const DepositAndWithdraw = ({ globalLoading, setGlobalLoading }) => {
     setIsLoading(true);
     const maxMintCount = cycleCount <= 4 ? 30 + (cycleCount - 1) * 10 : 60;
 
-    if (mintCount === maxMintCount) {
+    if (mintCount !== maxMintCount) {
       toast.error(
         `You can't deposit more than once every ${maxMintCount} days.`
       );
+      setIsLoading(false);
       return;
     }
 
