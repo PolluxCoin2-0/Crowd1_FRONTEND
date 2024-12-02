@@ -23,6 +23,7 @@ const DepositAndWithdraw = ({ globalLoading, setGlobalLoading }) => {
   const [withdrawLoading, setWithdrawLoading] = useState(false);
   const [isDeposit, setIsDeposit] = useState(false);
   const [directReferralCount, setDirectReferralCount] = useState(0);
+  const [previousDepositAmountData, setPreviousDepositAmountData] = useState(0);
 
   const fetchData = async () => {
     setDataLoading(true);
@@ -36,6 +37,7 @@ const DepositAndWithdraw = ({ globalLoading, setGlobalLoading }) => {
         userData?.data?.previousReward +
         referralAmount?.data
     );
+    setPreviousDepositAmountData(userData?.data?.previousDepositAmount)
     setCycleCount(userData?.data?.cycleCount);
     setMintCount(userData?.data?.mintCount);
     setAvailableAmount(userData?.data?.depositAmount);
@@ -65,6 +67,13 @@ const DepositAndWithdraw = ({ globalLoading, setGlobalLoading }) => {
     }
 
     setIsLoading(true);
+
+    if (previousDepositAmountData > 0) {
+      toast.error("Please withdraw the amount first.");
+      setIsLoading(false);
+      return;
+  }  
+
     const maxMintCount = cycleCount <= 4 ? 30 + (cycleCount - 1) * 10 : 60;
 
     if (mintCount !== maxMintCount) {

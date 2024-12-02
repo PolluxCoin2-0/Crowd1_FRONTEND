@@ -21,6 +21,7 @@ const MintTable = ({ globalLoading, setGlobalLoading }) => {
 
   const fetchData = async () => {
     const userDataApi = await userDetailsApi(stateData?.walletAddress);
+    console.log({ userDataApi})
     setUserDataApi(userDataApi?.data); // Set user data to state variable
     // GET THE DATA FROM DB
     const userDataFromDB = await getDataFromDBApi(stateData?.token);
@@ -76,6 +77,11 @@ const MintTable = ({ globalLoading, setGlobalLoading }) => {
 
     try {
       setIsLoading(true);
+      if (userDataApi?.previousDepositAmount > 0) {
+        toast.error("Please withdraw the amount first.");
+        setIsLoading(false);
+        return;
+    } 
       const lastMintTime = await getUserMintedTimeApi(stateData?.token);
       const currentTime = new Date(); // Get current time
 
@@ -102,19 +108,19 @@ const MintTable = ({ globalLoading, setGlobalLoading }) => {
       }
       const mintApiData = await mintApi(stateData?.walletAddress);
 
-      // console.log({mintApiData})
+      console.log({mintApiData})
 
       const signedTransaction = await window.pox.signdata(
         mintApiData?.data?.transaction
       );
 
-      // console.log({signedTransaction})
+      console.log({signedTransaction})
 
       const broadcast = await window.pox.broadcast(
         JSON.parse(signedTransaction[1])
       );
 
-      // console.log({broadcast})
+      console.log({broadcast})
 
       if (broadcast[2] !== "Broadcast Successfully Done") {
         setIsLoading(false);

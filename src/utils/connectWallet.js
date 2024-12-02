@@ -13,6 +13,7 @@ export async function getPolinkweb() {
           // Get details from the 'pox' object
           const detailsData = await window.pox.getDetails();
           const parsedDetailsObject = JSON.parse(JSON.stringify(detailsData)); // Safely parse data
+          console.log({ data: parsedDetailsObject})
 
           // Check for network condition
           // if (parsedDetailsObject[1]?.data?.Network === "Yuvi Testnet") {
