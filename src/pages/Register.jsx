@@ -44,11 +44,13 @@ const Register = () => {
       setIsLoading(true);
       // Deposit Function
       const depositSuccess =  await handleDepositFunc();
-      if(depositSuccess === "REVERT"){
-        toast.error("Deposit failed");
+      if (!depositSuccess || depositSuccess === "REVERT") {
+        // Stop registration if deposit fails
+        toast.error("Deposit failed or insufficient balance.");
         setIsLoading(false);
         return;
       }
+      
       const response = await registerApi(myWallet, referralWallet);
       // Handle successful response
       if (response.data === "Duplicate Wallet") {
