@@ -86,16 +86,15 @@ const MintTable = ({ globalLoading, setGlobalLoading }) => {
       const lastMintTime = await getUserMintedTimeApi(stateData?.token);
       const currentTime = new Date(); // Get current time
 
-      // Check if lastMintTime?.data is a valid date
-      const isValidDate = (date) => {
-        return !isNaN(new Date(date).getTime()); // Returns true if valid date, false otherwise
-      };
-
       let lastMintDate = null;
 
-      if (lastMintTime?.data && isValidDate(lastMintTime.data)) {
-        lastMintDate = new Date(lastMintTime.data); // Convert last mint date to 'YYYY-MM-DD'
-      }
+   // Parse the date properly
+     if (lastMintTime?.data) {
+     const parsedDate = Date.parse(lastMintTime.data); // Parse the string into a timestamp
+     if (!isNaN(parsedDate)) {
+      lastMintDate = new Date(parsedDate); // Convert timestamp to a Date object
+     }
+     }
 
       // Check if 24 hours have passed since lastMintTime
       if (lastMintDate) {
