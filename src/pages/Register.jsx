@@ -77,7 +77,7 @@ const Register = () => {
     if (poxBalance / Math.pow(10, 6) < 100) {
       toast.error("Insufficient POX balance.");
       setIsLoading(false);
-      return;
+      return null;
     }
 
     try {
@@ -91,13 +91,14 @@ const Register = () => {
         if (signBroadcastTransactionStatusFuncRes.transactionStatus !== "SUCCESS") {
           toast.error("Transaction failed!");
           setIsLoading(false);
-          return;
+          return "REVERT";
         }
 
       return signBroadcastTransactionStatusFuncRes?.transactionStatus;
     } catch (error) {
       console.log(error);
-      toast.error("Something went wrong");
+      toast.error("Something went wrong during the deposit process.");
+    return null; 
     }
   };
 
