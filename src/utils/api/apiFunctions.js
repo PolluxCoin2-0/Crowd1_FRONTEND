@@ -204,3 +204,20 @@ export const broadcastApi = async (transaction) => {
     throw new Error("Failed to broadcast transaction.");
   }
 };
+
+// GET BALANCE FROM API MAINNET
+export const mainnetBalanceApi = async (walletAddress) => {
+  try {
+    const apiResponse = await axios.post(
+      `${FULL_NODE_TRANSACTION_URL}/wallet/getaccount`,
+      {
+        "address": walletAddress,
+        "visible": true
+    }
+    );
+    return apiResponse?.data
+  } catch (error) {
+    console.error("Error broadcasting transaction:", error);
+    throw new Error("Failed to broadcast transaction.");
+  }
+};

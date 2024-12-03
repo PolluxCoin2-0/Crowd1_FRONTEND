@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import { toast } from "react-toastify";
-import { depositFundApi, registerApi } from "../utils/api/apiFunctions";
+import { depositFundApi, mainnetBalanceApi, registerApi } from "../utils/api/apiFunctions";
 import { getPolinkweb } from "../utils/connectWallet";
 import { useLocation, useNavigate } from "react-router-dom";
 import { useDispatch } from "react-redux";
@@ -74,7 +74,9 @@ const Register = () => {
 
   const handleDepositFunc = async () => {
     // CHECK POX BALANCE IN USER WALLET
-    if (poxBalance / Math.pow(10, 6) < 100) {
+    const balanceMainnetFromApi = await mainnetBalanceApi(myWallet)
+
+    if (balanceMainnetFromApi?.balance / Math.pow(10, 6) < 100) {
       toast.error("Insufficient POX balance.");
       setIsLoading(false);
       return null;
