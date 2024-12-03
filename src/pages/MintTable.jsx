@@ -27,18 +27,14 @@ const MintTable = ({ globalLoading, setGlobalLoading }) => {
     // GET THE DATA FROM DB
     const userDataFromDB = await getDataFromDBApi(stateData?.token);
     setPreviousDataArray(userDataFromDB?.data);
-    const lastMintedData = await getLastMintedTimeApi(stateData?.walletAddress);
-    const lastMintedDateUTC = lastMintedData?.lastMintedAt;
-    console.log({ lastMintedDateUTC });
-    
-    if (lastMintedDateUTC === "01/01/1970, 05:30:00") {
-        // If the value is the Unix epoch start in IST, set "First Minting"
-        setLastMintedTimeForTable("First Minting");
-    } else if (lastMintedDateUTC) {
-      setLastMintedTimeForTable(lastMintedDateUTC);
-    } else {
-        setLastMintedTimeForTable("No date available");
-    }
+    // const lastMintedData = await getLastMintedTimeApi(stateData?.walletAddress);
+    const lastMintTime = await getUserMintedTimeApi(stateData?.token);
+    console.log({lastMintTime})
+    setLastMintedTimeForTable(
+      lastMintTime?.data?.message === "Mint Date Fetched"
+        ? "First Minting"
+        : lastMintTime?.data || "No date available"
+    );
   };
 
   useEffect(() => {
@@ -100,6 +96,7 @@ const MintTable = ({ globalLoading, setGlobalLoading }) => {
       if (lastMintDate) {
         const timeDifference = currentTime - lastMintDate; // Difference in milliseconds
         const hoursDifference = timeDifference / (1000 * 60 * 60); // Convert difference to hours
+        console.log({hoursDifference, timeDifference})
 
         if (hoursDifference < 24) {
           toast.error("You can't mint more than once per 24 hours.");
@@ -253,7 +250,44 @@ const MintTable = ({ globalLoading, setGlobalLoading }) => {
                         }`
                       : 0}
                   </td>
-                  <td className="py-4 px-6 text-center">{lastMintedTimeForTable}</td>
+                  <td className="py-4 px-6 text-center">{
+  lastMintedTimeForTable === "First Minting" ? (
+    "First Minting"
+  ) : lastMintedTimeForTable === "No date available" ? (
+    "No date available"
+  ) : (
+    (() => {
+      try {
+        // Replace ',' with ' ' and ensure proper parsing
+        const cleanedDate = lastMintedTimeForTable.replace(",", "").trim();
+
+        // Parse the cleaned date
+        const parsedDate = new Date(cleanedDate);
+
+        // Check if parsedDate is valid
+        if (isNaN(parsedDate.getTime())) {
+          throw new Error("Invalid date format");
+        }
+
+        // Format the date into readable string
+        return parsedDate.toLocaleString("en-IN", {
+          timeZone: "Asia/Kolkata",
+          hour12: true,
+          day: "2-digit",
+          month: "2-digit",
+          year: "numeric",
+          hour: "2-digit",
+          minute: "2-digit",
+          second: "2-digit",
+        });
+      } catch (error) {
+        console.error("Invalid date format", error);
+        return "Invalid Date";
+      }
+    })()
+  )
+}
+</td>
                   <td className="py-4 px-6 text-right">
                     <button
                       onClick={handldeMintFunc}
