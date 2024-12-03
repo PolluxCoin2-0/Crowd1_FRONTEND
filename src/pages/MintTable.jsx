@@ -78,11 +78,11 @@ const MintTable = ({ globalLoading, setGlobalLoading }) => {
 
     try {
       setIsLoading(true);
-      if (userDataApi?.previousDepositAmount > 0) {
-        toast.error("Please withdraw the amount first.");
-        setIsLoading(false);
-        return;
-    } 
+    //   if (userDataApi?.previousDepositAmount > 0) {
+    //     toast.error("Please withdraw the amount first.");
+    //     setIsLoading(false);
+    //     return;
+    // } 
       const lastMintTime = await getUserMintedTimeApi(stateData?.token);
       const currentTime = new Date(); // Get current time
 
