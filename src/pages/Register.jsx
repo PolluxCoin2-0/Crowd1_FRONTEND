@@ -6,7 +6,7 @@ import { useLocation, useNavigate } from "react-router-dom";
 import { useDispatch } from "react-redux";
 import { setDataObject } from "../redux/slice";
 import Loader from "../components/Loader";
-import { verifyTransactionById } from "../utils/TransactionResult";
+import { SignBroadcastTransactionStatus } from "../utils/signBroadcastTransaction";
 
 const Register = () => {
   const [referralWallet, setReferralWallet] = useState("");
@@ -83,29 +83,16 @@ const Register = () => {
 
       console.log({depositApiData})
 
-      const signedTransaction2 = await window.pox.signdata(
-        depositApiData?.data?.transaction
-      );
+        // SIGN, BROADCAST and TRANSACTION STATUS
+        const signBroadcastTransactionStatusFuncRes = await SignBroadcastTransactionStatus(depositApiData?.data?.transaction)
 
-      console.log({signedTransaction2})
+        if (signBroadcastTransactionStatusFuncRes.transactionStatus !== "SUCCESS") {
+          toast.error("Transaction failed!");
+          setIsLoading(false);
+          return;
+        }
 
-      const broadcast2 = await window.pox.broadcast(
-        JSON.parse(signedTransaction2[1])
-      );
-
-      
-      if (broadcast2[2] !== "Broadcast Successfully Done") {
-        setIsLoading(false);
-        toast.error("Failed to broadcast the transaction.");
-        return;
-      } 
-      
-      const broadcastParsed = JSON.parse(broadcast2[1]);
-      const broadcastParsedTransaction = broadcastParsed?.txid;
-      console.log({broadcastParsedTransaction})
-      // Check transaction is SUCCESS or REVERT
-      const trxResult = await verifyTransactionById(broadcastParsedTransaction);
-      return trxResult;
+      return signBroadcastTransactionStatusFuncRes?.transactionStatus;
     } catch (error) {
       console.log(error);
       toast.error("Something went wrong");

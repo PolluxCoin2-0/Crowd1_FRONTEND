@@ -11,6 +11,7 @@ import {
 import { toast } from "react-toastify";
 import { useEffect, useState } from "react";
 import Loader from "../components/Loader";
+import { SignBroadcastTransactionStatus } from "../utils/signBroadcastTransaction";
 
 const MintTable = ({ globalLoading, setGlobalLoading }) => {
   const stateData = useSelector((state) => state?.wallet?.dataObject);
@@ -110,21 +111,12 @@ const MintTable = ({ globalLoading, setGlobalLoading }) => {
 
       console.log({mintApiData})
 
-      const signedTransaction = await window.pox.signdata(
-        mintApiData?.data?.transaction
-      );
+      // SIGN, BROADCAST and TRANSACTION STATUS
+      const signBroadcastTransactionStatusFuncRes = await SignBroadcastTransactionStatus(mintApiData?.data?.transaction)
 
-      console.log({signedTransaction})
-
-      const broadcast = await window.pox.broadcast(
-        JSON.parse(signedTransaction[1])
-      );
-
-      console.log({broadcast})
-
-      if (broadcast[2] !== "Broadcast Successfully Done") {
+      if (signBroadcastTransactionStatusFuncRes.transactionStatus !== "SUCCESS") {
+        toast.error("Transaction failed!");
         setIsLoading(false);
-        toast.error("Failed to broadcast the transaction.");
         return;
       }
 

@@ -2,6 +2,7 @@ import axios from "axios";
 import API_ENDPOINTS from "./apiEndpoints"; // Import the API endpoints
 
 const BASE_URL = import.meta.env.VITE_BASE_URL;
+const FULL_NODE_TRANSACTION_URL = import.meta.env.VITE_FULL_NODE_TRANSACTION_URL || "";
 
 /**
  * Generic POST request handler with token authentication
@@ -187,4 +188,19 @@ export const getLastMintedTimeApi = async (walletAddress) => {
   return postRequest(API_ENDPOINTS.mint.lastMintTime, {
     walletAddress,
   });
+};
+
+// Broadcast API
+export const broadcastApi = async (transaction) => {
+  try {
+    const broadcastResponse = await axios.post(
+      `${FULL_NODE_TRANSACTION_URL}/wallet/broadcasttransaction`,
+      transaction
+    );
+
+    return broadcastResponse?.data
+  } catch (error) {
+    console.error("Error broadcasting transaction:", error);
+    throw new Error("Failed to broadcast transaction.");
+  }
 };

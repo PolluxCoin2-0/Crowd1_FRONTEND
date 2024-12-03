@@ -18,13 +18,6 @@
     font-size: 1.5rem; /* Adjust font size */
   }
   
-  /* Background (optional, for better visibility) */
-  body {
-    background-color: #282c34;
-    color: white;
-    font-family: Arial, sans-serif;
-  }
-  
   /* Keyframes for animation */
   @keyframes move-text {
     0% {

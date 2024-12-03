@@ -10,6 +10,7 @@ import {
 } from "../utils/api/apiFunctions";
 import { toast } from "react-toastify";
 import Loader from "../components/Loader";
+import { SignBroadcastTransactionStatus } from "../utils/signBroadcastTransaction";
 
 const DepositAndWithdraw = ({ globalLoading, setGlobalLoading }) => {
   const stateData = useSelector((state) => state?.wallet?.dataObject);
@@ -100,18 +101,14 @@ const DepositAndWithdraw = ({ globalLoading, setGlobalLoading }) => {
         stateData?.walletAddress
       );
 
-      const signedTransaction2 = await window.pox.signdata(
-        depositApiData?.data?.transaction
-      );
+        // SIGN, BROADCAST and TRANSACTION STATUS
+        const signBroadcastTransactionStatusFuncRes = await SignBroadcastTransactionStatus(depositApiData?.data?.transaction)
 
-      const broadcast2 = await window.pox.broadcast(
-        JSON.parse(signedTransaction2[1])
-      );
-      if (broadcast2[2] !== "Broadcast Successfully Done") {
-        setIsLoading(false);
-        toast.error("Failed to broadcast the transaction.");
-        return;
-      }
+        if (signBroadcastTransactionStatusFuncRes.transactionStatus !== "SUCCESS") {
+          toast.error("Transaction failed!");
+          setIsLoading(false);
+          return;
+        }
 
       await fetchData();
       setGlobalLoading(!globalLoading);
@@ -162,19 +159,15 @@ const DepositAndWithdraw = ({ globalLoading, setGlobalLoading }) => {
     try {
       setWithdrawLoading(true);
       const withDrawApiData = await withdrawFundApi(stateData?.walletAddress);
-      const signedTransaction = await window.pox.signdata(
-        withDrawApiData?.data?.transaction
-      );
 
-      const broadcast = await window.pox.broadcast(
-        JSON.parse(signedTransaction[1])
-      );
+        // SIGN, BROADCAST and TRANSACTION STATUS
+        const signBroadcastTransactionStatusFuncRes = await SignBroadcastTransactionStatus(withDrawApiData?.data?.transaction)
 
-      if (broadcast[2] !== "Broadcast Successfully Done") {
-        setWithdrawLoading(false);
-        toast.error("Failed to broadcast the transaction.");
-        return;
-      }
+        if (signBroadcastTransactionStatusFuncRes.transactionStatus !== "SUCCESS") {
+          toast.error("Transaction failed!");
+          setIsLoading(false);
+          return;
+        }
 
       await fetchData();
       setGlobalLoading(!globalLoading);
