@@ -221,3 +221,8 @@ export const mainnetBalanceApi = async (walletAddress) => {
     throw new Error("Failed to broadcast transaction.");
   }
 };
+
+// CHECK USER EXISTED OR NOT
+export const checkUserExistedApi = async (walletAddress, referredBy)=>{
+  return postRequest(API_ENDPOINTS.user.checkUserExistOrNot,{walletAddress, referredBy},"");
+}

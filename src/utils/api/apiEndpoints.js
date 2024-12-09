@@ -7,6 +7,7 @@ const API_ENDPOINTS = {
     getUserDetails: "/getUser",
     depositFund: "/depositFund",
     withdrawFund: "/withdraw",
+    checkUserExistOrNot: "/checkUserExistOrNot",
   },
   tokenReturns: {
     userTotalReturns: "/getUserTotalReturn",

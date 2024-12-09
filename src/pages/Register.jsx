@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import { toast } from "react-toastify";
-import { depositFundApi, mainnetBalanceApi, registerApi } from "../utils/api/apiFunctions";
+import { checkUserExistedApi, depositFundApi, mainnetBalanceApi, registerApi } from "../utils/api/apiFunctions";
 import { getPolinkweb } from "../utils/connectWallet";
 import { useLocation, useNavigate } from "react-router-dom";
 import { useDispatch } from "react-redux";
@@ -42,6 +42,26 @@ const Register = () => {
 
     try {
       setIsLoading(true);
+
+    // CHECK USER IS ALREADY REGISTERED OR NOT AND ENTERED REFERRAL ADDRESS IS VALID OR NOT
+    const checkUserExistedApiData = await checkUserExistedApi(myWallet, referralAddress);
+    console.log("checkUserExistedApiData", checkUserExistedApiData);
+    
+    if(checkUserExistedApiData?.statusCode!==200){
+      toast.error("Internal server error!");
+      throw new Error("Internal server error!");
+    }
+
+     if(checkUserExistedApiData?.data === "Wallet address Already Exist"){
+      toast.error("Wallet address already registered!");
+      throw new Error("Wallet address already registered!");
+     }
+
+     if(checkUserExistedApiData?.data === "Invalid Referral Code") {
+      toast.error("Invalid Referral Code!");
+      throw new Error("Invalid Referral Code!");
+     }
+
       // Deposit Function
       const depositSuccess =  await handleDepositFunc();
       if (!depositSuccess || depositSuccess === "REVERT") {
@@ -52,13 +72,12 @@ const Register = () => {
       }
       
       const response = await registerApi(myWallet, referralWallet);
+      console.log({response})
       // Handle successful response
       if (response.data === "Duplicate Wallet") {
         toast.error("Duplicate Wallet.");
       } else if (response.data.walletAddress) {
         dispatch(setDataObject(response?.data));
-        setReferralWallet("");
-        setMyWallet("");
         toast.success("Registration successful!");
         navigate("/");
       } else {
@@ -68,6 +87,8 @@ const Register = () => {
       console.error("Registration error:", error);
       toast.error("An error occurred during registration.");
     } finally {
+      setReferralWallet("");
+      setMyWallet("");
       setIsLoading(false);
     }
   };
