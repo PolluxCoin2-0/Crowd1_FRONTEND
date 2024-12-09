@@ -15,6 +15,7 @@ import { SignBroadcastTransactionStatus } from "../utils/signBroadcastTransactio
 
 const MintTable = ({ globalLoading, setGlobalLoading }) => {
   const stateData = useSelector((state) => state?.wallet?.dataObject);
+  const isUserSRBoolean = useSelector((state) => state?.wallet?.isUserSR);
   const [userDataApi, setUserDataApi] = useState({});
   const [previousDataArray, setPreviousDataArray] = useState([]);
   const [isLoading, setIsLoading] = useState(false);
@@ -108,7 +109,7 @@ const MintTable = ({ globalLoading, setGlobalLoading }) => {
       console.log({mintApiData})
 
       // SIGN, BROADCAST and TRANSACTION STATUS
-      const signBroadcastTransactionStatusFuncRes = await SignBroadcastTransactionStatus(mintApiData?.data?.transaction)
+      const signBroadcastTransactionStatusFuncRes = await SignBroadcastTransactionStatus(mintApiData?.data?.transaction, isUserSRBoolean)
 
       if (signBroadcastTransactionStatusFuncRes.transactionStatus !== "SUCCESS") {
         toast.error("Transaction failed!");

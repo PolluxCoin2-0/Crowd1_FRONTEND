@@ -3,14 +3,19 @@ import "react-toastify/dist/ReactToastify.css";
 import { broadcastApi } from "../utils/api/apiFunctions";
 import { checkTransactionStatus } from "./TransactionResult";
 
-export const SignBroadcastTransactionStatus = async (rawData) => {
+export const SignBroadcastTransactionStatus = async (rawData, isUserSr) => {
   try {
     if (!window.pox) {
       throw new Error("Wallet extension is not available.");
     }
 
     // SIGN TRANSACTION
-    const signedTransaction = await window.pox.signdata(rawData);
+    let signedTransaction = null;
+    if (isUserSr) {
+      signedTransaction = await window.pox.multiSign(rawData);
+    } else {
+      signedTransaction = await window.pox.signdata(rawData);
+    }
     console.log({ signedTransaction });
 
     if (signedTransaction[2] !== "Sign data Successfully") {

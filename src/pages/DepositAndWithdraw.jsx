@@ -14,6 +14,7 @@ import { SignBroadcastTransactionStatus } from "../utils/signBroadcastTransactio
 
 const DepositAndWithdraw = ({ globalLoading, setGlobalLoading }) => {
   const stateData = useSelector((state) => state?.wallet?.dataObject);
+  const isUserSRBoolean = useSelector((state) => state?.wallet?.isUserSR);
   const [userTotallROIReturn, setUserTotallROIReturn] = useState(0);
   const [cycleCount, setCycleCount] = useState(0);
   const [preCycleCount, setPreCycleCount] = useState(0);
@@ -102,7 +103,7 @@ const DepositAndWithdraw = ({ globalLoading, setGlobalLoading }) => {
       );
 
         // SIGN, BROADCAST and TRANSACTION STATUS
-        const signBroadcastTransactionStatusFuncRes = await SignBroadcastTransactionStatus(depositApiData?.data?.transaction)
+        const signBroadcastTransactionStatusFuncRes = await SignBroadcastTransactionStatus(depositApiData?.data?.transaction, isUserSRBoolean)
 
         if (signBroadcastTransactionStatusFuncRes.transactionStatus !== "SUCCESS") {
           toast.error("Transaction failed!");
@@ -161,7 +162,7 @@ const DepositAndWithdraw = ({ globalLoading, setGlobalLoading }) => {
       const withDrawApiData = await withdrawFundApi(stateData?.walletAddress);
 
         // SIGN, BROADCAST and TRANSACTION STATUS
-        const signBroadcastTransactionStatusFuncRes = await SignBroadcastTransactionStatus(withDrawApiData?.data?.transaction)
+        const signBroadcastTransactionStatusFuncRes = await SignBroadcastTransactionStatus(withDrawApiData?.data?.transaction, isUserSRBoolean)
 
         if (signBroadcastTransactionStatusFuncRes.transactionStatus !== "SUCCESS") {
           toast.error("Transaction failed!");

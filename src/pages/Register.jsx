@@ -3,7 +3,7 @@ import { toast } from "react-toastify";
 import { checkUserExistedApi, depositFundApi, mainnetBalanceApi, registerApi } from "../utils/api/apiFunctions";
 import { getPolinkweb } from "../utils/connectWallet";
 import { useLocation, useNavigate } from "react-router-dom";
-import { useDispatch } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import { setDataObject } from "../redux/slice";
 import Loader from "../components/Loader";
 import { SignBroadcastTransactionStatus } from "../utils/signBroadcastTransaction";
@@ -18,6 +18,7 @@ const Register = () => {
   const location = useLocation();
   const dispatch = useDispatch();
   const referralAddress = location.state?.referralAddress;
+  const isUserSRBoolean = useSelector((state) => state?.wallet?.isUserSR);
 
   useEffect(() => {
     if (referralAddress) {
@@ -109,7 +110,7 @@ const Register = () => {
       console.log({depositApiData})
 
         // SIGN, BROADCAST and TRANSACTION STATUS
-        const signBroadcastTransactionStatusFuncRes = await SignBroadcastTransactionStatus(depositApiData?.data?.transaction)
+        const signBroadcastTransactionStatusFuncRes = await SignBroadcastTransactionStatus(depositApiData?.data?.transaction, isUserSRBoolean)
 
         if (signBroadcastTransactionStatusFuncRes.transactionStatus !== "SUCCESS") {
           toast.error("Transaction failed!");

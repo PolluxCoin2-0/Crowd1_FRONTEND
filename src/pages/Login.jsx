@@ -1,8 +1,8 @@
 import { Link, useNavigate } from "react-router-dom";
 import { getPolinkweb } from "../utils/connectWallet";
-import { loginApi } from "../utils/api/apiFunctions";
+import { getUserIsSR, loginApi } from "../utils/api/apiFunctions";
 import { useDispatch } from "react-redux";
-import { setDataObject } from "../redux/slice";
+import { setDataObject, setIsUserSR } from "../redux/slice";
 import { toast } from "react-toastify";
 import { useState } from "react";
 import Loader from "../components/Loader";
@@ -22,10 +22,24 @@ const Login = () => {
     const walletAddress = await getPolinkweb();
     if (walletAddress?.wallet_address) {
       try {
-        const apiData = await loginApi(walletAddress?.wallet_address);
+        let userWalletAddress = walletAddress?.wallet_address;
+        // CHECK USER IS SR OR NOT
+      const userSRApiData = await getUserIsSR(userWalletAddress);
+      console.log( userSRApiData)
+
+      if(userSRApiData?.message==="adderss undercontrol found"){
+        userWalletAddress = userSRApiData?.data;
+        dispatch(setIsUserSR(true));
+      }
+
+        const apiData = await loginApi(userWalletAddress);
         if (apiData?.data?.walletAddress) {
           //save apiResponse object in state management redux
-          dispatch(setDataObject(apiData?.data));
+          const updatedLoginData = {
+            ...apiData?.data,
+            walletAddress: userWalletAddress,
+          };
+          dispatch(setDataObject(updatedLoginData));
           navigate("/home");
         }
       } catch (error) {

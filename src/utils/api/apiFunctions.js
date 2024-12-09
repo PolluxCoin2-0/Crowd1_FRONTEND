@@ -226,3 +226,15 @@ export const mainnetBalanceApi = async (walletAddress) => {
 export const checkUserExistedApi = async (walletAddress, referredBy)=>{
   return postRequest(API_ENDPOINTS.user.checkUserExistOrNot,{walletAddress, referredBy},"");
 }
+
+// GET USER IS SR OR NOT
+export const getUserIsSR = async (walletAddress) => {
+  try {
+    const userSRResponse = await axios.get(`https://node.poxscan.io/wallet/getUnderControl?userAddress=${walletAddress}`);
+    return userSRResponse?.data;
+  } catch (error) {
+    console.error("Error in user SR API:", error);
+    throw new Error("Failed to get SR details.");
+  }
+};
+

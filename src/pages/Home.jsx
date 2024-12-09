@@ -4,7 +4,7 @@ import Blocks from "./Blocks";
 import DepositAndWithdraw from "./DepositAndWithdraw";
 import { toast } from "react-toastify";
 import { useSelector, useDispatch } from "react-redux";
-import { setDataObject } from "../redux/slice";
+import { setDataObject, setIsUserSR } from "../redux/slice";
 // Action to clear the wallet data
 import LogoImage from "../assets/Logo.png";
 import { Link } from "react-router-dom";
@@ -33,6 +33,7 @@ const Home = () => {
   // Function to handle sign out
   const handleSignOut = () => {
     dispatch(setDataObject()); // Clear wallet data using dispatch
+    dispatch(setIsUserSR(false));
     toast.success("Signed out successfully");
   };
 
