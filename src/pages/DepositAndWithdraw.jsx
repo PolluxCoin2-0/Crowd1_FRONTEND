@@ -161,14 +161,14 @@ const DepositAndWithdraw = ({ globalLoading, setGlobalLoading }) => {
       setWithdrawLoading(true);
       const withDrawApiData = await withdrawFundApi(stateData?.walletAddress);
 
-        // SIGN, BROADCAST and TRANSACTION STATUS
-        const signBroadcastTransactionStatusFuncRes = await SignBroadcastTransactionStatus(withDrawApiData?.data?.transaction, isUserSRBoolean)
+      // SIGN, BROADCAST and TRANSACTION STATUS
+      const signBroadcastTransactionStatusFuncRes = await SignBroadcastTransactionStatus(withDrawApiData?.data?.transaction, isUserSRBoolean)
 
-        if (signBroadcastTransactionStatusFuncRes.transactionStatus !== "SUCCESS") {
-          toast.error("Transaction failed!");
-          setIsLoading(false);
-          return;
-        }
+      if (signBroadcastTransactionStatusFuncRes.transactionStatus !== "SUCCESS") {
+      toast.error("Transaction failed!");
+      setIsLoading(false);
+      return;
+               }
 
       await fetchData();
       setGlobalLoading(!globalLoading);
@@ -188,9 +188,9 @@ const DepositAndWithdraw = ({ globalLoading, setGlobalLoading }) => {
           className="w-full lg:w-1/2 rounded-3xl"
           style={{
             boxShadow: `
-      0 2px 20px rgba(0, 0, 0, 0.4), 
-      inset 0 2px 5px rgba(255, 255, 255, 0.1),
-      inset 0 0px 2px rgba(255, 255, 255, 0.1)
+             0 2px 20px rgba(0, 0, 0, 0.4), 
+             inset 0 2px 5px rgba(255, 255, 255, 0.1),
+             inset 0 0px 2px rgba(255, 255, 255, 0.1)
     `,
           }}
         >
