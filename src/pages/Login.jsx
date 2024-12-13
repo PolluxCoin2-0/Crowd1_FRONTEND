@@ -51,7 +51,6 @@ const Login = () => {
     try {
       const loginApiData = await loginApi(walletAddress);
       if (loginApiData?.statusCode !== 200) {
-        toast.error("Invalid wallet address or login failed.");
         throw new Error("Invalid wallet address or login failed.");
       }
 
@@ -63,6 +62,7 @@ const Login = () => {
       toast.success("Login successful");
       navigate("/dashboard");
     } catch (error) {
+      toast.error("Invalid wallet address or login failed.");
       console.log("Login API Error:", error);
     }
   };
