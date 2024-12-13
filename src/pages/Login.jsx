@@ -60,7 +60,7 @@ const Login = () => {
       };
       dispatch(setDataObject(updatedLoginData));
       toast.success("Login successful");
-      navigate("/dashboard");
+      navigate("/home");
     } catch (error) {
       toast.error("Invalid wallet address or login failed.");
       console.log("Login API Error:", error);
