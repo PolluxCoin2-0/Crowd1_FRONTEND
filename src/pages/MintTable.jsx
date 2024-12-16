@@ -108,10 +108,10 @@ const MintTable = ({ globalLoading, setGlobalLoading }) => {
         const hoursDifference = timeDifference / (1000 * 60 * 60); // Convert difference to hours
         console.log({hoursDifference, timeDifference})
 
-        // if (hoursDifference < 24) {
-        //   toast.error("You can't mint more than once per 24 hours.");
-        //   return;
-        // }
+        if (hoursDifference < 24) {
+          toast.error("You can't mint more than once per 24 hours.");
+          return;
+        }
       }
       const mintApiData = await mintApi(stateData?.walletAddress);
 
