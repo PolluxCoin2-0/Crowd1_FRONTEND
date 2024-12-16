@@ -37,11 +37,6 @@ export const SignBroadcastTransactionStatus = async (rawData, isUserSr) => {
     const transactionStatus = await checkTransactionStatus(broadcast.txid);
     console.log({ transactionStatus });
 
-    if (transactionStatus !== "SUCCESS") {
-      toast.error("Transaction failed!");
-      throw new Error("Transaction failed!");
-    }
-
     return {
       txid: broadcast.txid,
       transactionStatus,
@@ -49,6 +44,5 @@ export const SignBroadcastTransactionStatus = async (rawData, isUserSr) => {
   } catch (error) {
     console.error("Transaction Error",error);
     toast.error( "An unexpected error occurred.");
-    return { txid: "", transactionStatus: "" };
   }
 };

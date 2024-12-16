@@ -3,7 +3,6 @@ import POX from "../assets/PoxImg.png";
 import { useEffect, useState } from "react";
 import {
   depositFundApi,
-  getDataOfDirectReferral,
   totalReferralReturnsApi,
   userDetailsApi,
   withdrawFundApi,
@@ -45,9 +44,7 @@ const DepositAndWithdraw = ({ globalLoading, setGlobalLoading }) => {
     setAvailableAmount(userData?.data?.depositAmount);
     setIsDeposit(userData?.data?.hasNewDeposit);
     setPreCycleCount(userData?.data?.preCycleCount);
-    const directReferralData = await getDataOfDirectReferral(stateData?.token);
-    console.log({directReferralCount})
-    setDirectReferralCount(directReferralData?.data?.leve1Count);
+    setDirectReferralCount(userData?.data?.referralCount);
     setDataLoading(false);
   };
 
@@ -105,7 +102,7 @@ const DepositAndWithdraw = ({ globalLoading, setGlobalLoading }) => {
         // SIGN, BROADCAST and TRANSACTION STATUS
         const signBroadcastTransactionStatusFuncRes = await SignBroadcastTransactionStatus(depositApiData?.data?.transaction, isUserSRBoolean)
 
-        if (signBroadcastTransactionStatusFuncRes.transactionStatus !== "SUCCESS") {
+        if (signBroadcastTransactionStatusFuncRes.transactionStatus === "REVERT") {
           toast.error("Transaction failed!");
           setIsLoading(false);
           return;
@@ -133,8 +130,9 @@ const DepositAndWithdraw = ({ globalLoading, setGlobalLoading }) => {
       return;
     }
 
+    console.log({preCycleCount, directReferralCount})
     // direct referral checking
-    if (preCycleCount === 1 && directReferralCount < 0) {
+    if (preCycleCount === 1 && directReferralCount < 1) {
       toast.error("You shoudl have 1 direct referral");
       return;
     } else if (preCycleCount === 2 && directReferralCount < 2) {
@@ -164,7 +162,7 @@ const DepositAndWithdraw = ({ globalLoading, setGlobalLoading }) => {
       // SIGN, BROADCAST and TRANSACTION STATUS
       const signBroadcastTransactionStatusFuncRes = await SignBroadcastTransactionStatus(withDrawApiData?.data?.transaction, isUserSRBoolean)
 
-      if (signBroadcastTransactionStatusFuncRes.transactionStatus !== "SUCCESS") {
+      if (signBroadcastTransactionStatusFuncRes.transactionStatus === "REVERT") {
       toast.error("Transaction failed!");
       setIsLoading(false);
       return;

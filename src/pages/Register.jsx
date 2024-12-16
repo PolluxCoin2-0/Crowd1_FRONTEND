@@ -112,7 +112,7 @@ const Register = () => {
         // SIGN, BROADCAST and TRANSACTION STATUS
         const signBroadcastTransactionStatusFuncRes = await SignBroadcastTransactionStatus(depositApiData?.data?.transaction, isUserSRBoolean)
 
-        if (signBroadcastTransactionStatusFuncRes.transactionStatus !== "SUCCESS") {
+        if (signBroadcastTransactionStatusFuncRes.transactionStatus === "REVERT") {
           toast.error("Transaction failed!");
           setIsLoading(false);
           return "REVERT";

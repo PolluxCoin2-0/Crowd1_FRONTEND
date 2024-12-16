@@ -108,10 +108,10 @@ const MintTable = ({ globalLoading, setGlobalLoading }) => {
         const hoursDifference = timeDifference / (1000 * 60 * 60); // Convert difference to hours
         console.log({hoursDifference, timeDifference})
 
-        if (hoursDifference < 24) {
-          toast.error("You can't mint more than once per 24 hours.");
-          return;
-        }
+        // if (hoursDifference < 24) {
+        //   toast.error("You can't mint more than once per 24 hours.");
+        //   return;
+        // }
       }
       const mintApiData = await mintApi(stateData?.walletAddress);
 
@@ -120,7 +120,7 @@ const MintTable = ({ globalLoading, setGlobalLoading }) => {
       // SIGN, BROADCAST and TRANSACTION STATUS
       const signBroadcastTransactionStatusFuncRes = await SignBroadcastTransactionStatus(mintApiData?.data?.transaction, isUserSRBoolean)
 
-      if (signBroadcastTransactionStatusFuncRes.transactionStatus !== "SUCCESS") {
+      if (signBroadcastTransactionStatusFuncRes.transactionStatus === "REVERT") {
         toast.error("Transaction failed!");
         setIsLoading(false);
         return;
