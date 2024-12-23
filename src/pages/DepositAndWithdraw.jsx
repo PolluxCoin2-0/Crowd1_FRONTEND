@@ -3,6 +3,7 @@ import POX from "../assets/PoxImg.png";
 import { useEffect, useState } from "react";
 import {
   depositFundApi,
+  mainnetBalanceApi,
   totalReferralReturnsApi,
   userDetailsApi,
   withdrawFundApi,
@@ -84,9 +85,10 @@ const DepositAndWithdraw = ({ globalLoading, setGlobalLoading }) => {
     }
 
     // CHECK POX BALANCE IN USER WALLET
-    const userBalance = await window.pox.getDetails();
-    const poxBalance = userBalance[1]?.data?.Balance;
-    if (poxBalance / Math.pow(10, 6) < 100) {
+    const poxAmountOfUser = await mainnetBalanceApi(stateData?.walletAddress);
+    console.log("poxAmountOfUser", poxAmountOfUser?.balance);
+    const userBalance = (poxAmountOfUser?.balance || 0) / Math.pow(10, 6);
+    if (userBalance < 100) {
       toast.error("Insufficient POX balance.");
       setIsLoading(false);
       return;
