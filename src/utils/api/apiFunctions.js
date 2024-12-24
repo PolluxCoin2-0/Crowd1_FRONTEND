@@ -238,3 +238,21 @@ export const getUserIsSR = async (walletAddress) => {
   }
 };
 
+// GET SIVER AND GOLD COUNT
+export const getSilverAndGoldCountApi = async ()=>{
+  return getRequest(API_ENDPOINTS.user.getSilverandGoldCount,);
+}
+
+// GET TOTAL USER COUNT
+export const getTotalUserCountApi = async ()=>{
+  return getRequest(API_ENDPOINTS.user.getAllUserCount,);
+}
+
+// GET TOTAL MINT COUNT
+export const getTotalMintCountApi = async ()=>{
+  return getRequest(API_ENDPOINTS.user.getTotalMintCount,);
+}
+// HANDLE MINT FUNCTION
+export const postMintFunctionApi = async (walletAddress)=>{
+  return postRequest(API_ENDPOINTS.user.handleMint,{walletAddress},"");
+}

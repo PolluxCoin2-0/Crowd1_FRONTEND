@@ -8,7 +8,11 @@ const API_ENDPOINTS = {
     depositFund: "/depositFund",
     withdrawFund: "/withdraw",
     checkUserExistOrNot: "/checkUserExistOrNot",
-  },
+    getSilverandGoldCount:"/getCount27",
+    handleMint: "/handleMint",
+    getAllUserCount: "/getAllUserCount",
+    getTotalMintCount: "/getTotalMintCount",
+   },
   tokenReturns: {
     userTotalReturns: "/getUserTotalReturn",
     totalRoiReturns: "/getTotalRoiReturn",

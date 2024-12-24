@@ -4,6 +4,7 @@ import {
   getLastMintedTimeApi,
   getUserMintedTimeApi,
   mintApi,
+  postMintFunctionApi,
   saveDataToDBApi,
   updateUserMintedTimeApi,
   userDetailsApi,
@@ -149,6 +150,9 @@ const MintTable = ({ globalLoading, setGlobalLoading }) => {
           toast.error("Something went wrong DB");
         }
       }
+
+     const handlemintData =  await postMintFunctionApi(stateData?.walletAddress);
+     console.log({ handlemintData })
       await fetchData();
       setGlobalLoading(!globalLoading);
       toast.success("Minted successfully.");

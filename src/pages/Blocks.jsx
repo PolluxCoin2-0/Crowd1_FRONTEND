@@ -3,6 +3,9 @@ import { MdOutlineAccountBalanceWallet } from "react-icons/md";
 import { RiExchangeDollarLine } from "react-icons/ri";
 import { Link } from "react-router-dom";
 import {
+  getSilverAndGoldCountApi,
+  getTotalMintCountApi,
+  getTotalUserCountApi,
   totalReferralReturnsApi,
   userDetailsApi,
   userTotalReturnsApi,
@@ -10,11 +13,20 @@ import {
 import { useSelector } from "react-redux";
 import POX from "../assets/PoxImg.png";
 import { AiFillBank } from "react-icons/ai";
+import { FaGem, FaUserCircle } from "react-icons/fa";
+import { GiGoldBar } from "react-icons/gi";
+import { IoHammerSharp } from "react-icons/io5";
 
 const Blocks = ({ globalLoading }) => {
   const [userCrowd1Balance, setCrowd1Balance] = useState(0);
   const [poolRewardAmount, setPoolRewardAmount] = useState({});
   const [referralAmount, setReferralAmount] = useState(0);
+  const [publicData, setPublicData] = useState({
+    silverCount:0,
+    goldCount:0,
+    TotalUsers:0,
+    MintCount24Hrs:0,
+  })
   const stateData = useSelector((state) => state?.wallet?.dataObject);
 
   useEffect(() => {
@@ -31,7 +43,30 @@ const Blocks = ({ globalLoading }) => {
         stateData?.walletAddress
       );
       setReferralAmount(referralAmount?.data);
+      const silverAndGoldCountData = await getSilverAndGoldCountApi();
+      console.log({ silverAndGoldCountData });
+      setPublicData((prevState) => ({
+        ...prevState,
+        silverCount: silverAndGoldCountData?.data27 || 0,
+        goldCount: silverAndGoldCountData?.data81 || 0,
+     }));
+
+     const totalUserCountData = await getTotalUserCountApi();
+     console.log({ totalUserCountData });
+     setPublicData((prevState) => ({
+      ...prevState,
+      TotalUsers: totalUserCountData?.data || 0,
+   }));
+
+     const mintCount24HrsData = await getTotalMintCountApi();
+     console.log({ mintCount24HrsData });
+     setPublicData((prevState) => ({
+      ...prevState,
+      MintCount24Hrs: mintCount24HrsData?.data?.["24HoursMintCount"] || 0,
+   }));
     };
+
+ 
     if (stateData?.walletAddress) {
       fetchData();
     }
@@ -150,6 +185,60 @@ const Blocks = ({ globalLoading }) => {
             </div>
           </Link>
         </div>
+      </div>
+
+      <div className="flex flex-col lg:flex-row items-center justify-between space-y-8 lg:space-y-0 lg:space-x-10 mb-8">
+  {/* Card Component */}
+  {[
+    {
+      label: "Total Silver Count",
+      balance: publicData?.silverCount,
+      bgColor: "bg-[#141414]",
+      iconBg: "bg-[#3A3A3A]",
+      Icon: FaGem,
+    },
+    {
+      label: "Total Gold Count",
+      balance: publicData?.goldCount,
+      bgColor: "bg-[#141414]",
+      iconBg: "bg-[#505050]",
+      Icon: GiGoldBar,
+    },
+    {
+      label: "Total Mint Count (24hrs)",
+      balance: publicData?.MintCount24Hrs,
+      bgColor: "bg-[#141414]",
+      iconBg: "bg-[#3C3C3C]",
+      Icon: IoHammerSharp, // Example: Keep the wallet for this card
+    },
+    {
+      label: "Total User Count",
+      balance: publicData?.TotalUsers,
+      bgColor: "bg-[#141414]",
+      iconBg: "bg-[#3C3C3C]",
+      Icon: FaUserCircle, // Example: Keep the wallet for this card
+    },
+  ].map((item, index) => (
+    <div
+      key={index}
+      className={`shadow-lg rounded-3xl w-full lg:w-[30%] flex flex-row justify-between items-center px-6 py-4 transition-transform duration-300 transform hover:scale-105 ${item.bgColor}`}
+    >
+      <div>
+        <div className="flex flex-row items-center space-x-4">
+          <img src={POX} alt="USDX" className="w-8 h-8" />
+          <p className="text-xl lg:text-2xl xl:text-2xl text-white font-bold">
+            {item.balance}
+          </p>
+        </div>
+        <p className="text-white/70 text-sm lg:text-base font-medium mt-4">
+          {item.label}
+        </p>
+      </div>
+      <div className={` rounded-full p-2 shadow-inner`}>
+        <item.Icon size={28} color="#FBBA57" />
+      </div>
+    </div>
+  ))}
       </div>
     </div>
   );
